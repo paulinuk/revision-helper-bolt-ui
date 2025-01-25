@@ -1,0 +1,52 @@
+# Node modules
+node_modules
+
+# Next.js build output
+.next
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Dependency directories
+/.pnp
+.pnp.js
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Output of 'next build'
+out
+
+# Testing
+/coverage
+/junit.xml
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Miscellaneous
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Ignore build and deployment artifacts
+dist
+.vercel
+.netlify
+
+# Optional: Ignore package manager lock files if not using that package manager
+# Uncomment the line of the package manager you do NOT use:
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
