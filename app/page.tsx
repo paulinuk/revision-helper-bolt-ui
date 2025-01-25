@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { BuildingOffice2Icon, AcademicCapIcon, BookOpenIcon, PlayCircleIcon } from '@heroicons/react/24/outline';
+import { BuildingOffice2Icon, AcademicCapIcon, BookOpenIcon, PlayCircleIcon, ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
 
 export default function Home() {
   const router = useRouter();
@@ -12,6 +12,7 @@ export default function Home() {
   const [selectedCourse, setSelectedCourse] = useState('');
   const [quizzes, setQuizzes] = useState([]);
   const [selectedQuiz, setSelectedQuiz] = useState('');
+  const [flashcardCount, setFlashcardCount] = useState(1);
   const studentId = '121'; // Hardcoded student ID
 
   useEffect(() => {
@@ -54,6 +55,12 @@ export default function Home() {
   const handleTakeQuiz = () => {
     if (selectedQuiz) {
       router.push(`/quiz/${selectedQuiz}?studentId=${studentId}`);
+    }
+  };
+
+  const handleStartFlashcardSession = () => {
+    if (flashcardCount > 0 && flashcardCount <= 5) {
+      router.push(`/flashcards?courseId=${selectedCourse}&studentId=${studentId}&count=${flashcardCount}`);
     }
   };
 
@@ -113,6 +120,32 @@ export default function Home() {
             </div>
           )}
 
+          {/* Flashcard Session */}
+          {selectedCourse && (
+            <div className="card">
+              <div className="flex items-center gap-3 mb-4">
+                <ClipboardDocumentListIcon className="w-6 h-6 text-blue-600" />
+                <h2 className="text-lg font-semibold text-gray-800">Flash Card Session</h2>
+              </div>
+              <div className="flex items-center gap-3">
+                <input
+                  type="number"
+                  min="1"
+                  max="5"
+                  value={flashcardCount}
+                  onChange={(e) => setFlashcardCount(Number(e.target.value))}
+                  className="select-input w-20"
+                />
+                <button
+                  onClick={handleStartFlashcardSession}
+                  className="btn-primary flex-1"
+                >
+                  Start
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Quiz Selection */}
           {selectedCourse && (
             <div className="card">
@@ -133,14 +166,14 @@ export default function Home() {
             </div>
           )}
 
-          {/* Start Quiz Button */}
+          {/* Take Quiz Button */}
           {selectedQuiz && (
             <button
               onClick={handleTakeQuiz}
               className="btn-primary w-full"
             >
               <PlayCircleIcon className="w-5 h-5" />
-              Start Quiz
+              Take Quiz
             </button>
           )}
         </div>
