@@ -18,25 +18,42 @@ export default function Home() {
   }, []);
 
   const fetchEstablishments = async () => {
-    const response = await fetch('/api/establishments');
-    const data = await response.json();
-    setEstablishments(data);
+    try {
+      const response = await fetch('/api/establishments');
+      if (!response.ok) throw new Error('Failed to fetch establishments');
+      const data = await response.json();
+      setEstablishments(data);
+    } catch (error) {
+      console.error('Error fetching establishments:', error);
+    }
   };
 
   const fetchCourses = async (establishmentId: string) => {
-    const response = await fetch(`/api/courses?establishmentId=${establishmentId}`);
-    const data = await response.json();
-    setCourses(data);
+    try {
+      const response = await fetch(`/api/courses?establishmentId=${establishmentId}`);
+      if (!response.ok) throw new Error('Failed to fetch courses');
+      const data = await response.json();
+      setCourses(data);
+    } catch (error) {
+      console.error('Error fetching courses:', error);
+    }
   };
 
   const fetchQuizzes = async (courseId: string) => {
-    const response = await fetch(`/api/quizzes?courseId=${courseId}`);
-    const data = await response.json();
-    setQuizzes(data);
+    try {
+      const response = await fetch(`/api/quizzes?courseId=${courseId}`);
+      if (!response.ok) throw new Error('Failed to fetch quizzes');
+      const data = await response.json();
+      setQuizzes(data);
+    } catch (error) {
+      console.error('Error fetching quizzes:', error);
+    }
   };
 
   const handleTakeQuiz = () => {
-    router.push(`/quiz/${selectedQuiz}`);
+    if (selectedQuiz) {
+      router.push(`/quiz/${selectedQuiz}`);
+    }
   };
 
   return (
@@ -48,6 +65,7 @@ export default function Home() {
         </div>
 
         <div className="space-y-6">
+          {/* Institution Selection */}
           <div className="card">
             <div className="flex items-center gap-3 mb-4">
               <BuildingOffice2Icon className="w-6 h-6 text-blue-600" />
@@ -64,60 +82,66 @@ export default function Home() {
               className="select-input"
             >
               <option value="">Choose your institution...</option>
-              {establishments.map((est) => (
+              {establishments.map((est: any) => (
                 <option key={est.id} value={est.id}>{est.name}</option>
               ))}
             </select>
           </div>
 
-          <div className="card">
-            <div className="flex items-center gap-3 mb-4">
-              <AcademicCapIcon className="w-6 h-6 text-blue-600" />
-              <h2 className="text-lg font-semibold text-gray-800">Select Course</h2>
+          {/* Course Selection */}
+          {selectedEstablishment && (
+            <div className="card">
+              <div className="flex items-center gap-3 mb-4">
+                <AcademicCapIcon className="w-6 h-6 text-blue-600" />
+                <h2 className="text-lg font-semibold text-gray-800">Select Course</h2>
+              </div>
+              <select
+                value={selectedCourse}
+                onChange={(e) => {
+                  setSelectedCourse(e.target.value);
+                  setSelectedQuiz('');
+                  fetchQuizzes(e.target.value);
+                }}
+                className="select-input"
+              >
+                <option value="">Choose your course...</option>
+                {courses.map((course: any) => (
+                  <option key={course.id} value={course.id}>{course.name}</option>
+                ))}
+              </select>
             </div>
-            <select
-              value={selectedCourse}
-              onChange={(e) => {
-                setSelectedCourse(e.target.value);
-                setSelectedQuiz('');
-                fetchQuizzes(e.target.value);
-              }}
-              className="select-input"
-              disabled={!selectedEstablishment}
-            >
-              <option value="">Choose your course...</option>
-              {courses.map((course) => (
-                <option key={course.id} value={course.id}>{course.name}</option>
-              ))}
-            </select>
-          </div>
+          )}
 
-          <div className="card">
-            <div className="flex items-center gap-3 mb-4">
-              <BookOpenIcon className="w-6 h-6 text-blue-600" />
-              <h2 className="text-lg font-semibold text-gray-800">Select Quiz</h2>
+          {/* Quiz Selection */}
+          {selectedCourse && (
+            <div className="card">
+              <div className="flex items-center gap-3 mb-4">
+                <BookOpenIcon className="w-6 h-6 text-blue-600" />
+                <h2 className="text-lg font-semibold text-gray-800">Select Quiz</h2>
+              </div>
+              <select
+                value={selectedQuiz}
+                onChange={(e) => setSelectedQuiz(e.target.value)}
+                className="select-input"
+              >
+                <option value="">Choose a quiz...</option>
+                {quizzes.map((quiz: any) => (
+                  <option key={quiz.id} value={quiz.id}>{quiz.name}</option>
+                ))}
+              </select>
             </div>
-            <select
-              value={selectedQuiz}
-              onChange={(e) => setSelectedQuiz(e.target.value)}
-              className="select-input"
-              disabled={!selectedCourse}
-            >
-              <option value="">Choose a quiz...</option>
-              {quizzes.map((quiz) => (
-                <option key={quiz.id} value={quiz.id}>{quiz.name}</option>
-              ))}
-            </select>
-          </div>
+          )}
 
-          <button
-            onClick={handleTakeQuiz}
-            disabled={!selectedQuiz}
-            className="btn-primary w-full"
-          >
-            <PlayCircleIcon className="w-5 h-5" />
-            Start Quiz
-          </button>
+          {/* Start Quiz Button */}
+          {selectedQuiz && (
+            <button
+              onClick={handleTakeQuiz}
+              className="btn-primary w-full"
+            >
+              <PlayCircleIcon className="w-5 h-5" />
+              Start Quiz
+            </button>
+          )}
         </div>
       </div>
     </main>

@@ -13,5 +13,8 @@ export async function GET(request: Request) {
     { id: '6', name: 'Engineering', establishmentId: '3' },
   ].filter(course => course.establishmentId === establishmentId);
   
+  // Simulate a delay to show loading state
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
   return NextResponse.json(courses);
 }

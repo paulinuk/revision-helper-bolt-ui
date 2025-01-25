@@ -17,5 +17,8 @@ export async function GET(request: Request) {
     { id: '10', name: 'Electrical Circuits', courseId: '6' },
   ].filter(quiz => quiz.courseId === courseId);
   
+  // Simulate a delay to show loading state
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
   return NextResponse.json(quizzes);
 }

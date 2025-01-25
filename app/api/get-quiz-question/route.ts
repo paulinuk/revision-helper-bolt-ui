@@ -4,16 +4,15 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const quizId = searchParams.get('quizId');
   const questionNumber = Number(searchParams.get('questionNumber'));
-  const studentId = searchParams.get('studentId');
 
-  if (!quizId || !questionNumber || !studentId) {
+  if (!quizId || !questionNumber) {
     return NextResponse.json(
       { error: 'Missing required parameters' },
       { status: 400 }
     );
   }
 
-  // Sample questions data structure with topics and quiz names
+  // Enhanced quiz database with more questions
   const quizzesDatabase = {
     '1': {
       name: 'Mathematics Fundamentals',
@@ -52,56 +51,21 @@ export async function GET(request: Request) {
           text: 'What is 8 / 2?', 
           options: ['2', '3', '4', '5'], 
           correctAnswer: '4' 
-        },
-        { 
-          id: '1-6', 
-          topic: 'Addition',
-          text: 'What is 7 + 3?', 
-          options: ['9', '10', '11', '12'], 
-          correctAnswer: '10' 
-        },
-        { 
-          id: '1-7', 
-          topic: 'Multiplication',
-          text: 'What is 6 * 2?', 
-          options: ['10', '12', '14', '16'], 
-          correctAnswer: '12' 
-        },
-        { 
-          id: '1-8', 
-          topic: 'Division',
-          text: 'What is 20 / 4?', 
-          options: ['3', '4', '5', '6'], 
-          correctAnswer: '5' 
-        },
-        { 
-          id: '1-9', 
-          topic: 'Subtraction',
-          text: 'What is 9 - 3?', 
-          options: ['4', '5', '6', '7'], 
-          correctAnswer: '6' 
-        },
-        { 
-          id: '1-10', 
-          topic: 'Multiplication',
-          text: 'What is 5 * 5?', 
-          options: ['20', '25', '30', '35'], 
-          correctAnswer: '25' 
         }
       ]
     },
-    '3': {
+    '2': {
       name: 'Business Basics',
       questions: [
         { 
-          id: '3-1', 
+          id: '2-1', 
           topic: 'Business Goals',
           text: 'What is the primary goal of a business?', 
           options: ['Maximize profits', 'Social responsibility', 'Customer satisfaction', 'Employee happiness'], 
           correctAnswer: 'Maximize profits' 
         },
         { 
-          id: '3-2', 
+          id: '2-2', 
           topic: 'Marketing',
           text: 'What is the main purpose of marketing?', 
           options: ['Increase sales', 'Build brand awareness', 'Customer satisfaction', 'All of the above'], 
@@ -133,6 +97,7 @@ export async function GET(request: Request) {
   return NextResponse.json({
     ...currentQuestion,
     quizName: quiz.name,
+    totalQuestions: quizQuestions.length,
     hasNext: questionNumber < quizQuestions.length
   });
 }

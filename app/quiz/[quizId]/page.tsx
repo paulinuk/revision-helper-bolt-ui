@@ -7,77 +7,74 @@ import { ArrowLeftIcon, CheckCircleIcon, XCircleIcon, PlayIcon } from '@heroicon
 export default function QuizPage() {
   const router = useRouter();
   const params = useParams();
-  const quizId = params.quizId;
-  const [currentQuestion, setCurrentQuestion] = useState(null);
+  const quizId = params.quizId as string;
+  
+  const [currentQuestion, setCurrentQuestion] = useState<any>(null);
   const [quizName, setQuizName] = useState('');
   const [questionNumber, setQuestionNumber] = useState(1);
   const [selectedAnswer, setSelectedAnswer] = useState('');
   const [feedback, setFeedback] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [correctAnswers, setCorrectAnswers] = useState(0);
-  const [totalQuestions] = useState(10);
+  const [totalQuestions, setTotalQuestions] = useState(0);
   const [quizScore, setQuizScore] = useState(0);
   const [answerStatus, setAnswerStatus] = useState({
     isCorrect: null,
     correctAnswer: null
   });
-  const studentId = '123';
 
-  const answeredQuestions = questionNumber - 1;
+  useEffect(() => {
+    const fetchQuestion = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await fetch(
+          `/api/get-quiz-question?quizId=${quizId}&questionNumber=${questionNumber}`
+        );
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to fetch question');
+        }
 
-  const getAnswerStyle = (option) => {
-    if (!hasSubmitted) return '';
-    
-    if (option === answerStatus.correctAnswer) {
-      return 'bg-green-50 border-green-500';
-    }
-    
-    if (option === selectedAnswer && !answerStatus.isCorrect) {
-      return 'bg-red-50 border-red-500';
-    }
-    
-    return '';
-  };
+        const data = await response.json();
+        setCurrentQuestion(data);
+        setQuizName(data.quizName);
+        setTotalQuestions(data.totalQuestions);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchQuestion();
+  }, [quizId, questionNumber]);
 
   const handleSubmitAnswer = async () => {
     if (!selectedAnswer || hasSubmitted || !currentQuestion) return;
 
     try {
       setHasSubmitted(true);
-      const response = await fetch('/api/submit-question-answer', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          questionId: currentQuestion.id,
-          studentId: studentId,
-          answer: selectedAnswer,
-          currentScore: quizScore,
-          correctAnswers: correctAnswers,
-          questionNumber: questionNumber
-        }),
-      });
+      const isCorrect = selectedAnswer === currentQuestion.correctAnswer;
+      const newCorrectAnswers = isCorrect ? correctAnswers + 1 : correctAnswers;
+      const newScore = Math.round((newCorrectAnswers / questionNumber) * 100);
 
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to submit answer');
-      }
-
-      setFeedback(data.feedback);
-      setQuizScore(data.quizScore);
+      setQuizScore(newScore);
+      setCorrectAnswers(newCorrectAnswers);
       setAnswerStatus({
-        isCorrect: data.answerIsCorrect,
-        correctAnswer: data.correctAnswer
+        isCorrect,
+        correctAnswer: currentQuestion.correctAnswer
       });
-      
-      if (data.answerIsCorrect) {
-        setCorrectAnswers(prev => prev + 1);
-      }
-    } catch (err) {
+
+      setFeedback(
+        isCorrect 
+          ? 'Correct! Great job!' 
+          : `Incorrect. The correct answer is: ${currentQuestion.correctAnswer}`
+      );
+    } catch (err: any) {
       setError(err.message);
       setHasSubmitted(false);
     }
@@ -91,42 +88,20 @@ export default function QuizPage() {
       setHasSubmitted(false);
       setAnswerStatus({ isCorrect: null, correctAnswer: null });
     } else {
-      router.push('/');
+      const quizResults = {
+        score: quizScore,
+        correctAnswers: correctAnswers,
+        totalQuestions: totalQuestions,
+        quizName: quizName
+      };
+      localStorage.setItem('quizResults', JSON.stringify(quizResults));
+      router.push(`/quiz/complete`);
     }
   };
 
   const handleBackToSelection = () => {
     router.push('/');
   };
-
-  useEffect(() => {
-    const fetchQuestion = async () => {
-      setIsLoading(true);
-      setError(null);
-      setHasSubmitted(false);
-      setAnswerStatus({ isCorrect: null, correctAnswer: null });
-      try {
-        const response = await fetch(
-          `/api/get-quiz-question?quizId=${quizId}&questionNumber=${questionNumber}&studentId=${studentId}`
-        );
-        
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || 'Failed to fetch question');
-        }
-
-        const data = await response.json();
-        setCurrentQuestion(data);
-        setQuizName(data.quizName);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchQuestion();
-  }, [quizId, questionNumber, studentId]);
 
   if (error) {
     return (
@@ -213,10 +188,16 @@ export default function QuizPage() {
               </div>
 
               <div className="space-y-3">
-                {currentQuestion?.options?.map((option, index) => (
+                {currentQuestion?.options?.map((option: string, index: number) => (
                   <label
                     key={index}
-                    className={`flex items-center gap-3 p-4 border rounded-lg cursor-pointer transition-all duration-200 ${getAnswerStyle(option)} ${!hasSubmitted ? 'hover:bg-gray-50' : ''}`}
+                    className={`flex items-center gap-3 p-4 border rounded-lg cursor-pointer transition-all duration-200 ${
+                      answerStatus.correctAnswer === option 
+                        ? 'bg-green-50 border-green-500' 
+                        : selectedAnswer === option && !answerStatus.isCorrect
+                          ? 'bg-red-50 border-red-500'
+                          : 'hover:bg-gray-50'
+                    }`}
                   >
                     <input
                       type="radio"

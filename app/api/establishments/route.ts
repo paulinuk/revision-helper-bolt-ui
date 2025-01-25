@@ -7,5 +7,8 @@ export async function GET() {
     { id: '3', name: 'Bromley College' },
   ];
   
+  // Simulate a delay to show loading state
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
   return NextResponse.json(establishments);
 }
