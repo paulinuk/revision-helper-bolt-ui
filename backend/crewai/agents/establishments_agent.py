@@ -1,6 +1,5 @@
 import sqlite3
 import yaml
-import json
 
 class EstablishmentsAgent:
     def __init__(self):
@@ -10,6 +9,6 @@ class EstablishmentsAgent:
 
     def get_establishments(self):
         cursor = self.conn.cursor()
-        cursor.execute('SELECT * FROM establishments')
+        cursor.execute('SELECT * FROM establishments ORDER BY name')
         establishments = cursor.fetchall()
         return establishments

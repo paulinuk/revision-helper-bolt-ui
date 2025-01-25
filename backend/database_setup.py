@@ -1,7 +1,16 @@
 import sqlite3
+import os
+from seeding.seed_data import seed_data
 
 def create_tables():
-    conn = sqlite3.connect('backend/local_database/revision_helper.db')
+    db_path = 'local_database/revision_helper.db'
+
+    # Delete the existing database file if it exists
+    if os.path.exists(db_path):
+        os.remove(db_path)
+
+    # Create a new database connection
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
     # Create tables
@@ -17,6 +26,8 @@ def create_tables():
         id INTEGER PRIMARY KEY,
         name TEXT NOT NULL,
         establishment_id INTEGER,
+        course_overview TEXT,
+        approved BOOLEAN DEFAULT FALSE,
         FOREIGN KEY (establishment_id) REFERENCES establishments(id)
     )
     ''')
@@ -27,7 +38,11 @@ def create_tables():
         name TEXT NOT NULL,
         course_id INTEGER,
         quiz_date DATE NOT NULL,
-        FOREIGN KEY (course_id) REFERENCES courses(id)
+        quiz_number INTEGER,
+        student_id INTEGER,
+        started BOOLEAN DEFAULT FALSE,
+        FOREIGN KEY (course_id) REFERENCES courses(id),
+        FOREIGN KEY (student_id) REFERENCES students(id)
     )
     ''')
 
@@ -38,6 +53,8 @@ def create_tables():
         options TEXT NOT NULL,
         correct_answer TEXT NOT NULL,
         quiz_id INTEGER,
+        topic TEXT,
+        difficulty_level INTEGER,
         FOREIGN KEY (quiz_id) REFERENCES quizzes(id)
     )
     ''')
@@ -58,8 +75,44 @@ def create_tables():
     )
     ''')
 
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS student_question_history (
+        student_id INTEGER NOT NULL,
+        question_id INTEGER NOT NULL,
+        last_asked_date DATE,
+        PRIMARY KEY (student_id, question_id),
+        FOREIGN KEY (question_id) REFERENCES questions(id)
+    )
+    ''')
+
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS course_materials (
+        id INTEGER PRIMARY KEY,
+        course_id INTEGER NOT NULL,
+        name TEXT NOT NULL,
+        upload_date DATE NOT NULL,
+        materialType TEXT NOT NULL,
+        rawData BLOB NOT NULL,
+        extractedData TEXT,
+        FOREIGN KEY (course_id) REFERENCES courses(id)
+    )
+    ''')
+
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS students (
+        id INTEGER PRIMARY KEY,
+        forename TEXT NOT NULL,
+        surname TEXT NOT NULL,
+        full_name TEXT NOT NULL,
+        ability_level INTEGER NOT NULL CHECK(ability_level BETWEEN 1 AND 10),
+        establishment_id INTEGER,
+        FOREIGN KEY (establishment_id) REFERENCES establishments(id)
+    )
+    ''')
+
     conn.commit()
     conn.close()
 
 if __name__ == '__main__':
     create_tables()
+    seed_data()

@@ -4,6 +4,6 @@ description: |
 
 tasks:
   - name: GetStudentPerformance
-    description: Retrieve performance data for a specific student in a given course.
+    description: Retrieve performance data for a specific student in a given course, using AI to analyze performance and provide feedback.
     input: Student ID and Course ID.
     output: Performance data for the student.

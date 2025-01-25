@@ -7,5 +7,8 @@ agent = QuestionsAgent()
 @questions_blueprint.route('/', methods=['GET'])
 def get_questions():
     quiz_id = request.args.get('quizId')
-    questions = agent.get_questions(quiz_id)
-    return jsonify(questions)
+    try:
+        questions = agent.get_questions(quiz_id)
+        return jsonify(questions)
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400

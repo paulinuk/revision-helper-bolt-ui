@@ -1,6 +1,5 @@
 import sqlite3
 import yaml
-import json
 
 class CoursesAgent:
     def __init__(self):
@@ -11,7 +10,7 @@ class CoursesAgent:
     def get_courses(self, establishment_id):
         cursor = self.conn.cursor()
         cursor.execute('''
-        SELECT * FROM courses WHERE establishment_id = ?
+        SELECT * FROM courses WHERE establishment_id = ? ORDER BY name
         ''', (establishment_id,))
         courses = cursor.fetchall()
         return courses

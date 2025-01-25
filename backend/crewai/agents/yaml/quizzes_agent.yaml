@@ -4,6 +4,6 @@ description: |
 
 tasks:
   - name: GetQuizzes
-    description: Retrieve a list of quizzes for a given course.
+    description: Retrieve a list of quizzes for a given course, using AI to suggest quizzes that align with a student's learning path.
     input: Course ID.
     output: List of quizzes associated with the course.
