@@ -6,10 +6,10 @@ from datetime import datetime
 
 class StudentQuizAgent:
   def __init__(self):
-    self.conn = sqlite3.connect('backend/local_database/revision_helper.db')
-    with open('backend/crewai/agents/yaml/student_quiz_agent.yaml', 'r') as file:
+    self.conn = sqlite3.connect('local_database/revision_helper.db')
+    with open('crewai/agents/yaml/student_quiz_agent.yaml', 'r') as file:
       self.config = yaml.safe_load(file)
-    with open('backend/config/config.json', 'r') as file:
+    with open('config/config.json', 'r') as file:
       config = json.load(file)
       openai.api_key = config['openai_api_key']
 

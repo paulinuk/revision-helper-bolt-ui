@@ -4,8 +4,8 @@ import json
 
 class StudentsAgent:
     def __init__(self):
-        self.conn = sqlite3.connect('backend/local_database/revision_helper.db')
-        with open('backend/crewai/agents/yaml/students_agent.yaml', 'r') as file:
+        self.conn = sqlite3.connect('local_database/revision_helper.db')
+        with open('crewai/agents/yaml/students_agent.yaml', 'r') as file:
             self.config = yaml.safe_load(file)
 
     def get_student_performance(self, student_id, course_id):
