@@ -65,7 +65,7 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen py-12">
+    <main className="min-h-screen py-12 bg-gradient-to-r from-blue-50 to-green-50">
       <div className="max-w-3xl mx-auto space-y-8 animate-fade-in">
         <div className="text-center space-y-4">
           <h1 className="text-4xl font-bold text-gray-900">Revision Helper</h1>

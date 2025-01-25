@@ -64,7 +64,7 @@ export default function QuizCompletePage() {
   }
 
   return (
-    <main className="min-h-screen py-12">
+    <main className="min-h-screen py-12 bg-gradient-to-r from-blue-50 to-green-50">
       <div className="max-w-3xl mx-auto space-y-8 animate-fade-in">
         <div className="card text-center space-y-6">
           <CheckCircleIcon className="w-16 h-16 mx-auto text-green-600" />
@@ -73,37 +73,37 @@ export default function QuizCompletePage() {
 
           <div className="space-y-4">
             <div className="grid grid-cols-3 gap-4">
-              <div className="p-4 bg-gray-50 rounded-lg">
+              <div className="p-4 bg-blue-100 rounded-lg">
                 <p className="text-sm text-gray-600">Score</p>
                 <p className="text-2xl font-bold text-gray-900">{quizSummary.Score}%</p>
               </div>
-              <div className="p-4 bg-gray-50 rounded-lg">
+              <div className="p-4 bg-green-100 rounded-lg">
                 <p className="text-sm text-gray-600">Correct Answers</p>
                 <p className="text-2xl font-bold text-gray-900">{quizSummary.CorrectAnswers}</p>
               </div>
-              <div className="p-4 bg-gray-50 rounded-lg">
+              <div className="p-4 bg-red-100 rounded-lg">
                 <p className="text-sm text-gray-600">Incorrect Answers</p>
                 <p className="text-2xl font-bold text-gray-900">{quizSummary.IncorrectAnswers}</p>
               </div>
             </div>
 
             <h3 className="text-lg font-semibold text-gray-900">Topic Summary</h3>
-            <table className="min-w-full bg-white">
+            <table className="min-w-full bg-white rounded-lg shadow-md">
               <thead>
-                <tr>
-                  <th className="py-2">Topic</th>
-                  <th className="py-2">Correct</th>
-                  <th className="py-2">Incorrect</th>
-                  <th className="py-2">Score</th>
+                <tr className="bg-gradient-to-r from-blue-500 to-green-400 text-white">
+                  <th className="py-2 px-4">Topic</th>
+                  <th className="py-2 px-4">Correct</th>
+                  <th className="py-2 px-4">Incorrect</th>
+                  <th className="py-2 px-4">Score</th>
                 </tr>
               </thead>
               <tbody>
                 {quizSummary.TopicSummary.map((topic: any, index: number) => (
                   <tr key={index} className="text-center">
-                    <td className="py-2">{topic.TopicName}</td>
-                    <td className="py-2">{topic.CorrectAnswers}</td>
-                    <td className="py-2">{topic.IncorrectAnswers}</td>
-                    <td className="py-2">{topic.ScorePercentage}%</td>
+                    <td className="py-2 px-4">{topic.TopicName}</td>
+                    <td className="py-2 px-4">{topic.CorrectAnswers}</td>
+                    <td className="py-2 px-4">{topic.IncorrectAnswers}</td>
+                    <td className="py-2 px-4">{topic.ScorePercentage}%</td>
                   </tr>
                 ))}
               </tbody>
@@ -125,18 +125,18 @@ export default function QuizCompletePage() {
                 )}
               </div>
               {showCorrectQuestions && (
-                <table className="min-w-full bg-white text-center">
+                <table className="min-w-full bg-white text-center rounded-lg shadow-md">
                   <thead>
-                    <tr>
-                      <th className="py-2">Question</th>
-                      <th className="py-2">Answer</th>
+                    <tr className="bg-green-100">
+                      <th className="py-2 px-4">Question</th>
+                      <th className="py-2 px-4">Answer</th>
                     </tr>
                   </thead>
                   <tbody>
                     {quizSummary.CorrectQuestions.map((question: any, index: number) => (
                       <tr key={index}>
-                        <td className="py-2">{question.Question}</td>
-                        <td className="py-2">{question.CorrectAnswer}</td>
+                        <td className="py-2 px-4">{question.Question}</td>
+                        <td className="py-2 px-4">{question.CorrectAnswer}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -157,20 +157,20 @@ export default function QuizCompletePage() {
                 )}
               </div>
               {showIncorrectQuestions && (
-                <table className="min-w-full bg-white">
+                <table className="min-w-full bg-white rounded-lg shadow-md">
                   <thead>
-                    <tr>
-                      <th className="py-2">Question</th>
-                      <th className="py-2">Provided Answer</th>
-                      <th className="py-2">Correct Answer</th>
+                    <tr className="bg-red-100">
+                      <th className="py-2 px-4">Question</th>
+                      <th className="py-2 px-4">Provided Answer</th>
+                      <th className="py-2 px-4">Correct Answer</th>
                     </tr>
                   </thead>
                   <tbody>
                     {quizSummary.IncorrectQuestions.map((question: any, index: number) => (
                       <tr key={index} className="text-center">
-                        <td className="py-2">{question.Question}</td>
-                        <td className="py-2">{question.ProvidedAnswer}</td>
-                        <td className="py-2">{question.CorrectAnswer}</td>
+                        <td className="py-2 px-4">{question.Question}</td>
+                        <td className="py-2 px-4">{question.ProvidedAnswer}</td>
+                        <td className="py-2 px-4">{question.CorrectAnswer}</td>
                       </tr>
                     ))}
                   </tbody>

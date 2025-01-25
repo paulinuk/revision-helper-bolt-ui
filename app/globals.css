@@ -5,22 +5,23 @@
 @layer components {
   .card {
     @apply bg-white rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl;
+    background-image: linear-gradient(to bottom right, #f0f4f8, #ffffff);
   }
   
   .btn-primary {
-    @apply bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 
-           hover:bg-blue-700 hover:scale-105 active:scale-95 flex items-center justify-center gap-2;
+    @apply bg-gradient-to-r from-blue-500 to-green-400 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 
+           hover:from-blue-600 hover:to-green-500 hover:scale-105 active:scale-95 flex items-center justify-center gap-2;
   }
   
   .btn-secondary {
-    @apply bg-white text-gray-700 px-6 py-3 rounded-lg font-medium border border-gray-200 
-           transition-all duration-300 hover:bg-gray-50 hover:scale-105 active:scale-95 
-           flex items-center justify-center gap-2;
+    @apply bg-gradient-to-r from-pink-500 to-purple-400 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 
+           hover:from-pink-600 hover:to-purple-500 hover:scale-105 active:scale-95 flex items-center justify-center gap-2;
   }
   
   .select-input {
     @apply w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 
            focus:border-blue-500 transition-all duration-200;
+    background-color: #f9fafb;
   }
   
   .progress-bar {
@@ -62,14 +63,16 @@
     border-radius: 1rem;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
+    background-size: cover;
+    background-position: center;
   }
 
   .card-front {
-    background-color: #ffffff;
+    background-image: url('https://source.unsplash.com/400x250/?nature,water');
   }
 
   .card-back {
-    background-color: #f0f4f8;
+    background-image: url('https://source.unsplash.com/400x250/?sky,clouds');
     transform: rotateY(180deg);
   }
 
