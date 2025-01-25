@@ -82,7 +82,7 @@ export default function QuizPage() {
     }
   };
 
-  const handleNextQuestion = () => {
+  const handleNextQuestion = async () => {
     if (questionNumber < totalQuestions) {
       setQuestionNumber(prev => prev + 1);
       setSelectedAnswer('');
@@ -90,15 +90,7 @@ export default function QuizPage() {
       setHasSubmitted(false);
       setAnswerStatus({ isCorrect: null, correctAnswer: null });
     } else {
-      const quizResults = {
-        score: quizScore,
-        correctAnswers: correctAnswers,
-        totalQuestions: totalQuestions,
-        quizName: quizName,
-        studentId: studentId
-      };
-      localStorage.setItem('quizResults', JSON.stringify(quizResults));
-      router.push(`/quiz/complete?studentId=${studentId}`);
+      router.push(`/quiz/complete?quizId=${quizId}&studentId=${studentId}`);
     }
   };
 
@@ -195,11 +187,13 @@ export default function QuizPage() {
                   <label
                     key={index}
                     className={`flex items-center gap-3 p-4 border rounded-lg cursor-pointer transition-all duration-200 ${
-                      answerStatus.correctAnswer === option 
-                        ? 'bg-green-50 border-green-500' 
-                        : selectedAnswer === option && !answerStatus.isCorrect
-                          ? 'bg-red-50 border-red-500'
-                          : 'hover:bg-gray-50'
+                      selectedAnswer === option && !hasSubmitted
+                        ? 'bg-blue-50 border-blue-500'
+                        : answerStatus.correctAnswer === option 
+                          ? 'bg-green-50 border-green-500' 
+                          : selectedAnswer === option && !answerStatus.isCorrect
+                            ? 'bg-red-50 border-red-500'
+                            : 'hover:bg-gray-50'
                     }`}
                   >
                     <input
@@ -235,13 +229,15 @@ export default function QuizPage() {
           )}
 
           <div className="flex gap-4">
-            <button
-              onClick={handleSubmitAnswer}
-              disabled={!selectedAnswer || hasSubmitted}
-              className="btn-primary flex-1"
-            >
-              {hasSubmitted ? 'Submitted' : 'Submit Answer'}
-            </button>
+            {!hasSubmitted && (
+              <button
+                onClick={handleSubmitAnswer}
+                disabled={!selectedAnswer}
+                className="btn-primary flex-1"
+              >
+                Submit Answer
+              </button>
+            )}
 
             {feedback && (
               <button

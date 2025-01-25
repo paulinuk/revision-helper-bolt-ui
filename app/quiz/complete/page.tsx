@@ -1,74 +1,190 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { CheckCircleIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { useEffect, useState } from 'react';
+import { CheckCircleIcon, ArrowLeftIcon, ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 
 export default function QuizCompletePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const quizId = searchParams.get('quizId') || '';
   const studentId = searchParams.get('studentId') || '';
+  const [quizSummary, setQuizSummary] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [showCorrectQuestions, setShowCorrectQuestions] = useState(false);
+  const [showIncorrectQuestions, setShowIncorrectQuestions] = useState(false);
 
-  // Get quiz results from localStorage
-  const quizResults = JSON.parse(localStorage.getItem('quizResults') || '{}');
+  useEffect(() => {
+    const fetchQuizSummary = async () => {
+      try {
+        const response = await fetch(`/api/finish-quiz?quizId=${quizId}&studentId=${studentId}`);
+        if (!response.ok) throw new Error('Failed to fetch quiz summary');
+        const summary = await response.json();
+        setQuizSummary(summary);
+      } catch (err: any) {
+        setError(err.message);
+      }
+    };
+
+    fetchQuizSummary();
+  }, [quizId, studentId]);
 
   const handleBackToSelection = () => {
-    router.push(`/?studentId=${studentId}`);
+    router.push('/');
   };
+
+  if (error) {
+    return (
+      <div className="max-w-3xl mx-auto p-8">
+        <div className="bg-red-50 p-4 rounded-lg text-red-600 mb-4">
+          <div className="flex items-center gap-2">
+            <ArrowLeftIcon className="w-5 h-5" />
+            <span>Error: {error}</span>
+          </div>
+        </div>
+        <button
+          onClick={handleBackToSelection}
+          className="btn-secondary"
+        >
+          Back to Selection
+        </button>
+      </div>
+    );
+  }
+
+  if (!quizSummary) {
+    return (
+      <div className="max-w-3xl mx-auto p-8">
+        <div className="animate-pulse space-y-4">
+          <div className="h-8 bg-gray-200 rounded w-1/2"></div>
+          <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <main className="min-h-screen py-12">
       <div className="max-w-3xl mx-auto space-y-8 animate-fade-in">
-        <div className="space-y-4">
+        <div className="card text-center space-y-6">
+          <CheckCircleIcon className="w-16 h-16 mx-auto text-green-600" />
+          <h1 className="text-3xl font-bold text-gray-900">Quiz Complete!</h1>
+          <p className="text-gray-600">You've successfully completed the quiz.</p>
+
+          <div className="space-y-4">
+            <div className="grid grid-cols-3 gap-4">
+              <div className="p-4 bg-gray-50 rounded-lg">
+                <p className="text-sm text-gray-600">Score</p>
+                <p className="text-2xl font-bold text-gray-900">{quizSummary.Score}%</p>
+              </div>
+              <div className="p-4 bg-gray-50 rounded-lg">
+                <p className="text-sm text-gray-600">Correct Answers</p>
+                <p className="text-2xl font-bold text-gray-900">{quizSummary.CorrectAnswers}</p>
+              </div>
+              <div className="p-4 bg-gray-50 rounded-lg">
+                <p className="text-sm text-gray-600">Incorrect Answers</p>
+                <p className="text-2xl font-bold text-gray-900">{quizSummary.IncorrectAnswers}</p>
+              </div>
+            </div>
+
+            <h3 className="text-lg font-semibold text-gray-900">Topic Summary</h3>
+            <table className="min-w-full bg-white">
+              <thead>
+                <tr>
+                  <th className="py-2">Topic</th>
+                  <th className="py-2">Correct</th>
+                  <th className="py-2">Incorrect</th>
+                  <th className="py-2">Score</th>
+                </tr>
+              </thead>
+              <tbody>
+                {quizSummary.TopicSummary.map((topic: any, index: number) => (
+                  <tr key={index} className="text-center">
+                    <td className="py-2">{topic.TopicName}</td>
+                    <td className="py-2">{topic.CorrectAnswers}</td>
+                    <td className="py-2">{topic.IncorrectAnswers}</td>
+                    <td className="py-2">{topic.ScorePercentage}%</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            <h3 className="text-lg font-semibold text-gray-900">Recommendation</h3>
+            <p className="text-sm text-gray-600">{quizSummary.Recommendation}</p>
+
+            <div className="space-y-2">
+              <div
+                className="flex items-center justify-between cursor-pointer"
+                onClick={() => setShowCorrectQuestions(!showCorrectQuestions)}
+              >
+                <h3 className="text-lg font-semibold text-gray-900">Correct Questions</h3>
+                {showCorrectQuestions ? (
+                  <ChevronDownIcon className="w-5 h-5" />
+                ) : (
+                  <ChevronRightIcon className="w-5 h-5" />
+                )}
+              </div>
+              {showCorrectQuestions && (
+                <table className="min-w-full bg-white text-center">
+                  <thead>
+                    <tr>
+                      <th className="py-2">Question</th>
+                      <th className="py-2">Answer</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {quizSummary.CorrectQuestions.map((question: any, index: number) => (
+                      <tr key={index}>
+                        <td className="py-2">{question.Question}</td>
+                        <td className="py-2">{question.CorrectAnswer}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <div
+                className="flex items-center justify-between cursor-pointer"
+                onClick={() => setShowIncorrectQuestions(!showIncorrectQuestions)}
+              >
+                <h3 className="text-lg font-semibold text-gray-900">Incorrect Questions</h3>
+                {showIncorrectQuestions ? (
+                  <ChevronDownIcon className="w-5 h-5" />
+                ) : (
+                  <ChevronRightIcon className="w-5 h-5" />
+                )}
+              </div>
+              {showIncorrectQuestions && (
+                <table className="min-w-full bg-white">
+                  <thead>
+                    <tr>
+                      <th className="py-2">Question</th>
+                      <th className="py-2">Provided Answer</th>
+                      <th className="py-2">Correct Answer</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {quizSummary.IncorrectQuestions.map((question: any, index: number) => (
+                      <tr key={index} className="text-center">
+                        <td className="py-2">{question.Question}</td>
+                        <td className="py-2">{question.ProvidedAnswer}</td>
+                        <td className="py-2">{question.CorrectAnswer}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </div>
+
           <button
             onClick={handleBackToSelection}
-            className="btn-secondary"
+            className="btn-primary w-full"
           >
-            <ArrowLeftIcon className="w-5 h-5" />
-            Back to Selection
+            Take Another Quiz
           </button>
-
-          <div className="card text-center space-y-6">
-            <div className="space-y-4">
-              <CheckCircleIcon className="w-16 h-16 mx-auto text-green-600" />
-              <h1 className="text-3xl font-bold text-gray-900">
-                Quiz Complete!
-              </h1>
-              <p className="text-gray-600">
-                You've successfully completed the quiz.
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <p className="text-sm text-gray-600">Score</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {quizResults.score}%
-                  </p>
-                </div>
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <p className="text-sm text-gray-600">Correct Answers</p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {quizResults.correctAnswers}/{quizResults.totalQuestions}
-                  </p>
-                </div>
-              </div>
-
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <p className="text-sm text-gray-600">Quiz Name</p>
-                <p className="text-xl font-semibold text-gray-900">
-                  {quizResults.quizName}
-                </p>
-              </div>
-            </div>
-
-            <button
-              onClick={handleBackToSelection}
-              className="btn-primary w-full"
-            >
-              Take Another Quiz
-            </button>
-          </div>
         </div>
       </div>
     </main>
