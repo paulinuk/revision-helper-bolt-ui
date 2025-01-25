@@ -1,2 +1,5 @@
-Flask
-crewAI
+Flask==2.3.2
+ruamel.yaml==0.17.21
+openai
+crewAI>=0.95.0
+crewAI-tools==0.17.0

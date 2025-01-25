@@ -3,17 +3,18 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { BuildingOffice2Icon, AcademicCapIcon, BookOpenIcon, PlayCircleIcon, ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
+import { API_BASE_URL } from './config';
 
 export default function Home() {
   const router = useRouter();
-  const [establishments, setEstablishments] = useState([]);
-  const [selectedEstablishment, setSelectedEstablishment] = useState('');
-  const [courses, setCourses] = useState([]);
-  const [selectedCourse, setSelectedCourse] = useState('');
-  const [quizzes, setQuizzes] = useState([]);
-  const [selectedQuiz, setSelectedQuiz] = useState('');
-  const [flashcardCount, setFlashcardCount] = useState(1);
-  const studentId = '121'; // Hardcoded student ID
+  const [establishments, setEstablishments] = useState<any[]>([]);
+  const [selectedEstablishment, setSelectedEstablishment] = useState<string>('');
+  const [courses, setCourses] = useState<any[]>([]);
+  const [selectedCourse, setSelectedCourse] = useState<string>('');
+  const [quizzes, setQuizzes] = useState<any[]>([]);
+  const [selectedQuiz, setSelectedQuiz] = useState<string>('');
+  const [flashcardCount, setFlashcardCount] = useState<number>(1);
+  const studentId: string = '121'; // Hardcoded student ID
 
   useEffect(() => {
     fetchEstablishments();
@@ -21,7 +22,7 @@ export default function Home() {
 
   const fetchEstablishments = async () => {
     try {
-      const response = await fetch('/api/establishments');
+      const response = await fetch(`${API_BASE_URL}/establishments`);
       if (!response.ok) throw new Error('Failed to fetch establishments');
       const data = await response.json();
       setEstablishments(data);
@@ -32,7 +33,7 @@ export default function Home() {
 
   const fetchCourses = async (establishmentId: string) => {
     try {
-      const response = await fetch(`/api/courses?establishmentId=${establishmentId}`);
+      const response = await fetch(`${API_BASE_URL}/courses?establishmentId=${establishmentId}`);
       if (!response.ok) throw new Error('Failed to fetch courses');
       const data = await response.json();
       setCourses(data);
@@ -43,7 +44,7 @@ export default function Home() {
 
   const fetchQuizzes = async (courseId: string) => {
     try {
-      const response = await fetch(`/api/quizzes?courseId=${courseId}`);
+      const response = await fetch(`${API_BASE_URL}/quizzes?courseId=${courseId}`);
       if (!response.ok) throw new Error('Failed to fetch quizzes');
       const data = await response.json();
       setQuizzes(data);

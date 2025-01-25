@@ -1,49 +1,48 @@
-import sqlite3
+const sqlite3 = require('sqlite3').verbose();
 
-def create_tables():
-    conn = sqlite3.connect('backend/local_database/revision_helper.db')
-    cursor = conn.cursor()
+function createTables() {
+  const db = new sqlite3.Database('backend/local_database/revision_helper.db');
 
-    # Create tables
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS establishments (
+  db.serialize(() => {
+    db.run(`
+      CREATE TABLE IF NOT EXISTS establishments (
         id INTEGER PRIMARY KEY,
         name TEXT NOT NULL
-    )
-    ''')
+      )
+    `);
 
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS courses (
+    db.run(`
+      CREATE TABLE IF NOT EXISTS courses (
         id INTEGER PRIMARY KEY,
         name TEXT NOT NULL,
         establishment_id INTEGER,
         FOREIGN KEY (establishment_id) REFERENCES establishments(id)
-    )
-    ''')
+      )
+    `);
 
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS quizzes (
+    db.run(`
+      CREATE TABLE IF NOT EXISTS quizzes (
         id INTEGER PRIMARY KEY,
         name TEXT NOT NULL,
         course_id INTEGER,
         quiz_date DATE NOT NULL,
         FOREIGN KEY (course_id) REFERENCES courses(id)
-    )
-    ''')
+      )
+    `);
 
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS questions (
+    db.run(`
+      CREATE TABLE IF NOT EXISTS questions (
         id INTEGER PRIMARY KEY,
         text TEXT NOT NULL,
         options TEXT NOT NULL,
         correct_answer TEXT NOT NULL,
         quiz_id INTEGER,
         FOREIGN KEY (quiz_id) REFERENCES quizzes(id)
-    )
-    ''')
+      )
+    `);
 
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS student_performance (
+    db.run(`
+      CREATE TABLE IF NOT EXISTS student_performance (
         id INTEGER PRIMARY KEY,
         student_id INTEGER NOT NULL,
         course_id INTEGER NOT NULL,
@@ -55,11 +54,11 @@ def create_tables():
         FOREIGN KEY (course_id) REFERENCES courses(id),
         FOREIGN KEY (quiz_id) REFERENCES quizzes(id),
         FOREIGN KEY (question_id) REFERENCES questions(id)
-    )
-    ''')
+      )
+    `);
+  });
 
-    conn.commit()
-    conn.close()
+  db.close();
+}
 
-if __name__ == '__main__':
-    create_tables()
+createTables();
