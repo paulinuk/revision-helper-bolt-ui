@@ -1,0 +1,6 @@
+{
+  "/page": "app/page.js",
+  "/quiz/[quizId]/page": "app/quiz/[quizId]/page.js",
+  "/api/get-quiz-question/route": "app/api/get-quiz-question/route.js",
+  "/api/submit-question-answer/route": "app/api/submit-question-answer/route.js"
+}
