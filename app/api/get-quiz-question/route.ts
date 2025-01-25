@@ -4,8 +4,9 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const quizId = searchParams.get('quizId');
   const questionNumber = Number(searchParams.get('questionNumber'));
+  const studentId = searchParams.get('studentId');
 
-  if (!quizId || !questionNumber) {
+  if (!quizId || !questionNumber || !studentId) {
     return NextResponse.json(
       { error: 'Missing required parameters' },
       { status: 400 }
@@ -98,6 +99,7 @@ export async function GET(request: Request) {
     ...currentQuestion,
     quizName: quiz.name,
     totalQuestions: quizQuestions.length,
-    hasNext: questionNumber < quizQuestions.length
+    hasNext: questionNumber < quizQuestions.length,
+    studentId: studentId // Include studentId in the response
   });
 }

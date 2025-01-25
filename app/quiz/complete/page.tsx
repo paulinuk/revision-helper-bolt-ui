@@ -1,16 +1,18 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { CheckCircleIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
 
 export default function QuizCompletePage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const studentId = searchParams.get('studentId') || '';
 
   // Get quiz results from localStorage
   const quizResults = JSON.parse(localStorage.getItem('quizResults') || '{}');
 
   const handleBackToSelection = () => {
-    router.push('/');
+    router.push(`/?studentId=${studentId}`);
   };
 
   return (

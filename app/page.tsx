@@ -12,6 +12,7 @@ export default function Home() {
   const [selectedCourse, setSelectedCourse] = useState('');
   const [quizzes, setQuizzes] = useState([]);
   const [selectedQuiz, setSelectedQuiz] = useState('');
+  const studentId = '121'; // Hardcoded student ID
 
   useEffect(() => {
     fetchEstablishments();
@@ -52,7 +53,7 @@ export default function Home() {
 
   const handleTakeQuiz = () => {
     if (selectedQuiz) {
-      router.push(`/quiz/${selectedQuiz}`);
+      router.push(`/quiz/${selectedQuiz}?studentId=${studentId}`);
     }
   };
 

@@ -1,13 +1,15 @@
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { ArrowLeftIcon, CheckCircleIcon, XCircleIcon, PlayIcon } from '@heroicons/react/24/outline';
 
 export default function QuizPage() {
   const router = useRouter();
   const params = useParams();
+  const searchParams = useSearchParams();
   const quizId = params.quizId as string;
+  const studentId = searchParams.get('studentId') || '';
   
   const [currentQuestion, setCurrentQuestion] = useState<any>(null);
   const [quizName, setQuizName] = useState('');
@@ -31,7 +33,7 @@ export default function QuizPage() {
       setError(null);
       try {
         const response = await fetch(
-          `/api/get-quiz-question?quizId=${quizId}&questionNumber=${questionNumber}`
+          `/api/get-quiz-question?quizId=${quizId}&questionNumber=${questionNumber}&studentId=${studentId}`
         );
         
         if (!response.ok) {
@@ -51,7 +53,7 @@ export default function QuizPage() {
     };
 
     fetchQuestion();
-  }, [quizId, questionNumber]);
+  }, [quizId, questionNumber, studentId]);
 
   const handleSubmitAnswer = async () => {
     if (!selectedAnswer || hasSubmitted || !currentQuestion) return;
@@ -92,10 +94,11 @@ export default function QuizPage() {
         score: quizScore,
         correctAnswers: correctAnswers,
         totalQuestions: totalQuestions,
-        quizName: quizName
+        quizName: quizName,
+        studentId: studentId
       };
       localStorage.setItem('quizResults', JSON.stringify(quizResults));
-      router.push(`/quiz/complete`);
+      router.push(`/quiz/complete?studentId=${studentId}`);
     }
   };
 
