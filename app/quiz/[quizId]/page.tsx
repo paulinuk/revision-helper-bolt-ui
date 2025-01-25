@@ -2,6 +2,7 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import { ArrowLeftIcon, CheckCircleIcon, XCircleIcon, PlayIcon } from '@heroicons/react/24/outline';
 
 export default function QuizPage() {
   const router = useRouter();
@@ -22,21 +23,19 @@ export default function QuizPage() {
     isCorrect: null,
     correctAnswer: null
   });
-  const studentId = '123'; // Replace with actual student ID
+  const studentId = '123';
 
   const answeredQuestions = questionNumber - 1;
 
   const getAnswerStyle = (option) => {
     if (!hasSubmitted) return '';
     
-    // Always highlight correct answer in green
     if (option === answerStatus.correctAnswer) {
-      return 'bg-green-100 border-green-500';
+      return 'bg-green-50 border-green-500';
     }
     
-    // Only highlight selected answer in red if it's incorrect
     if (option === selectedAnswer && !answerStatus.isCorrect) {
-      return 'bg-red-100 border-red-500';
+      return 'bg-red-50 border-red-500';
     }
     
     return '';
@@ -131,113 +130,146 @@ export default function QuizPage() {
 
   if (error) {
     return (
-      <div className="p-8">
-        <div className="text-red-500 mb-4">Error: {error}</div>
-        <button
-          onClick={() => setError(null)}
-          className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
-        >
-          Try Again
-        </button>
-        <button
-          onClick={handleBackToSelection}
-          className="bg-gray-500 text-white px-4 py-2 rounded"
-        >
-          Back to Quiz Selection
-        </button>
+      <div className="max-w-3xl mx-auto p-8">
+        <div className="bg-red-50 p-4 rounded-lg text-red-600 mb-4">
+          <div className="flex items-center gap-2">
+            <XCircleIcon className="w-5 h-5" />
+            <span>Error: {error}</span>
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <button
+            onClick={() => setError(null)}
+            className="btn-primary"
+          >
+            Try Again
+          </button>
+          <button
+            onClick={handleBackToSelection}
+            className="btn-secondary"
+          >
+            Back to Selection
+          </button>
+        </div>
       </div>
     );
   }
 
   if (isLoading || !currentQuestion) {
-    return <div className="p-8">Loading question...</div>;
-  }
-
-  return (
-    <main className="min-h-screen p-8">
-      <h1 className="text-2xl font-bold mb-8">{quizName}</h1>
-      
-      <div className="max-w-md space-y-4">
-        <div className="flex justify-between items-center">
-          <div className="text-sm text-gray-600">
-            Question {questionNumber} of {totalQuestions}
-          </div>
-          <div className="text-sm text-gray-600">
-            {answeredQuestions > 0 && (
-              <>
-                Score: {quizScore}%
-              </>
-            )}
-          </div>
-        </div>
-
-        <div className="w-full bg-gray-200 rounded-full h-2.5">
-          <div
-            className="bg-blue-600 h-2.5 rounded-full"
-            style={{ width: `${(questionNumber / totalQuestions) * 100}%` }}
-          ></div>
-        </div>
-
-        <div className="bg-white p-4 rounded shadow">
-          <h2 className="font-semibold mb-2">Question {questionNumber}</h2>
-          {currentQuestion?.topic && (
-            <p className="italic text-gray-600 mb-2">{currentQuestion.topic}</p>
-          )}
-          <p className="mb-4">{currentQuestion?.text}</p>
-          
+    return (
+      <div className="max-w-3xl mx-auto p-8">
+        <div className="animate-pulse space-y-4">
+          <div className="h-8 bg-gray-200 rounded w-1/2"></div>
+          <div className="h-4 bg-gray-200 rounded w-3/4"></div>
           <div className="space-y-2">
-            {currentQuestion?.options?.map((option, index) => (
-              <label
-                key={index}
-                className={`flex items-center space-x-2 p-2 border rounded ${getAnswerStyle(option)}`}
-              >
-                <input
-                  type="radio"
-                  name="answer"
-                  value={option}
-                  checked={selectedAnswer === option}
-                  onChange={(e) => !hasSubmitted && setSelectedAnswer(e.target.value)}
-                  className="accent-blue-500"
-                  disabled={hasSubmitted}
-                />
-                <span>{option}</span>
-              </label>
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="h-12 bg-gray-200 rounded"></div>
             ))}
           </div>
         </div>
+      </div>
+    );
+  }
 
-        {feedback && (
-          <div className="bg-gray-100 p-4 rounded">
-            <p className="text-sm">{feedback}</p>
-            <p className="text-sm mt-2">Your current score: {quizScore}%</p>
-          </div>
-        )}
-
-        <div className="flex justify-between">
+  return (
+    <main className="min-h-screen py-12">
+      <div className="max-w-3xl mx-auto space-y-8 animate-fade-in">
+        <div className="space-y-4">
           <button
-            onClick={handleSubmitAnswer}
-            disabled={!selectedAnswer || hasSubmitted}
-            className="bg-blue-500 text-white px-4 py-2 rounded disabled:bg-gray-300"
+            onClick={handleBackToSelection}
+            className="btn-secondary"
           >
-            {hasSubmitted ? 'Submitted' : 'Submit Answer'}
+            <ArrowLeftIcon className="w-5 h-5" />
+            Back to Selection
           </button>
 
-          {feedback && (
-            <button
-              onClick={handleNextQuestion}
-              className="bg-green-500 text-white px-4 py-2 rounded"
-            >
-              {questionNumber < totalQuestions ? 'Next Question' : 'Finish Quiz'}
-            </button>
-          )}
-        </div>
+          <div className="card">
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-2xl font-bold text-gray-900">{quizName}</h1>
+              <div className="text-sm text-gray-600">
+                Question {questionNumber} of {totalQuestions}
+              </div>
+            </div>
 
-        <button
-          onClick={handleBackToSelection}
-          className="bg-gray-500 text-white px-4 py-2 rounded"
-        >
-          Back to Quiz Selection
-        </button>
+            <div className="progress-bar">
+              <div
+                className="progress-bar-fill"
+                style={{ width: `${(questionNumber / totalQuestions) * 100}%` }}
+              ></div>
+            </div>
+          </div>
+
+          <div className="card">
+            <div className="space-y-6">
+              <div>
+                {currentQuestion?.topic && (
+                  <p className="text-sm text-blue-600 font-medium mb-2">
+                    {currentQuestion.topic}
+                  </p>
+                )}
+                <h2 className="text-lg font-semibold text-gray-900">
+                  {currentQuestion?.text}
+                </h2>
+              </div>
+
+              <div className="space-y-3">
+                {currentQuestion?.options?.map((option, index) => (
+                  <label
+                    key={index}
+                    className={`flex items-center gap-3 p-4 border rounded-lg cursor-pointer transition-all duration-200 ${getAnswerStyle(option)} ${!hasSubmitted ? 'hover:bg-gray-50' : ''}`}
+                  >
+                    <input
+                      type="radio"
+                      name="answer"
+                      value={option}
+                      checked={selectedAnswer === option}
+                      onChange={(e) => !hasSubmitted && setSelectedAnswer(e.target.value)}
+                      className="accent-blue-600"
+                      disabled={hasSubmitted}
+                    />
+                    <span>{option}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {feedback && (
+            <div className={`card ${answerStatus.isCorrect ? 'bg-green-50' : 'bg-red-50'}`}>
+              <div className="flex items-center gap-3">
+                {answerStatus.isCorrect ? (
+                  <CheckCircleIcon className="w-5 h-5 text-green-600" />
+                ) : (
+                  <XCircleIcon className="w-5 h-5 text-red-600" />
+                )}
+                <p className="text-sm">{feedback}</p>
+              </div>
+              <div className="mt-2 text-sm text-gray-600">
+                Current Score: {quizScore}%
+              </div>
+            </div>
+          )}
+
+          <div className="flex gap-4">
+            <button
+              onClick={handleSubmitAnswer}
+              disabled={!selectedAnswer || hasSubmitted}
+              className="btn-primary flex-1"
+            >
+              {hasSubmitted ? 'Submitted' : 'Submit Answer'}
+            </button>
+
+            {feedback && (
+              <button
+                onClick={handleNextQuestion}
+                className="btn-primary flex-1"
+              >
+                {questionNumber < totalQuestions ? 'Next Question' : 'Finish Quiz'}
+                <PlayIcon className="w-5 h-5" />
+              </button>
+            )}
+          </div>
+        </div>
       </div>
     </main>
   );

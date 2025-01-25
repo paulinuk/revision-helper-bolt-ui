@@ -1,4 +1,4 @@
-// File: /home/project/app/quiz/[quizId]/page.tsx
+// File: C:\Source\revision-helper-bolt-ui\app\quiz\[quizId]\page.tsx
 import * as entry from '../../../../../app/quiz/[quizId]/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

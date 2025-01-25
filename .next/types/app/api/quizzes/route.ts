@@ -1,4 +1,4 @@
-// File: /home/project/app/api/quizzes/route.ts
+// File: C:\Source\revision-helper-bolt-ui\app\api\quizzes\route.ts
 import * as entry from '../../../../../app/api/quizzes/route.js'
 import type { NextRequest } from 'next/server.js'
 
