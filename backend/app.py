@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_swagger_ui import get_swaggerui_blueprint
 from blueprints.establishments import establishments_blueprint
 from blueprints.courses import courses_blueprint
 from blueprints.quizzes import quizzes_blueprint
@@ -11,7 +12,6 @@ from blueprints.finish_quiz import finish_quiz_blueprint
 from blueprints.student_courses import student_courses_blueprint
 from blueprints.get_students import get_students_blueprint
 from blueprints.course_report import course_report_blueprint
-from blueprints.swagger_ui import swagger_ui_blueprint  # Import the new Swagger UI blueprint
 
 app = Flask(__name__)
 
@@ -28,7 +28,13 @@ app.register_blueprint(finish_quiz_blueprint, url_prefix='/api/finish_quiz')
 app.register_blueprint(student_courses_blueprint, url_prefix='/api/student-courses')
 app.register_blueprint(get_students_blueprint, url_prefix='/api/get-students')
 app.register_blueprint(course_report_blueprint)
-app.register_blueprint(swagger_ui_blueprint)  # Register the new Swagger UI blueprint
+
+# Swagger UI Setup
+SWAGGER_URL = "/api/docs"
+API_URL = "/api/swagger/swagger.json"
+
+swagger_blueprint = get_swaggerui_blueprint(SWAGGER_URL, API_URL)
+app.register_blueprint(swagger_blueprint, url_prefix="/api/docs")
 
 if __name__ == '__main__':
-  app.run(port=5000, debug=True)
+    app.run(port=5000, debug=True)

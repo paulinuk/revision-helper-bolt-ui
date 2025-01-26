@@ -1,226 +1,442 @@
 {
-  "swagger": "2.0",
-  "info": {
-    "version": "1.0.0",
-    "title": "Revision Helper API",
-    "description": "API documentation for the Revision Helper application"
-  },
-  "host": "localhost:5000",
-  "basePath": "/api",
-  "schemes": [
-    "http"
-  ],
-  "paths": {
-    "/establishments": {
-      "get": {
-        "summary": "Get Establishments",
-        "description": "Retrieve a list of all educational establishments",
-        "responses": {
-          "200": {
-            "description": "A list of establishments",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": { "type": "string" },
-                  "name": { "type": "string" }
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Revision Helper API",
+        "description": "API documentation for the Revision Helper application"
+    },
+    "host": "localhost:5000",
+    "basePath": "/api",
+    "schemes": [
+        "http"
+    ],
+    "paths": {
+        "/establishments": {
+            "get": {
+                "summary": "Get Establishments",
+                "description": "Retrieve a list of all educational establishments",
+                "responses": {
+                    "200": {
+                        "description": "A list of establishments",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
-              }
             }
-          }
-        }
-      }
-    },
-    "/courses": {
-      "get": {
-        "summary": "Get Courses",
-        "description": "Retrieve a list of courses for a specific establishment",
-        "parameters": [
-          {
-            "name": "establishmentId",
-            "in": "query",
-            "required": true,
-            "type": "string",
-            "description": "The ID of the establishment"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A list of courses",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": { "type": "string" },
-                  "name": { "type": "string" }
+        },
+        "/courses": {
+            "get": {
+                "summary": "Get Courses",
+                "description": "Retrieve a list of courses for a specific establishment",
+                "parameters": [
+                    {
+                        "name": "establishmentId",
+                        "in": "query",
+                        "required": true,
+                        "type": "string",
+                        "description": "The ID of the establishment"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A list of courses",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
-              }
             }
-          }
-        }
-      }
-    },
-    "/quizzes": {
-      "get": {
-        "summary": "Get Quizzes",
-        "description": "Retrieve a list of quizzes for a specific course",
-        "parameters": [
-          {
-            "name": "courseId",
-            "in": "query",
-            "required": true,
-            "type": "string",
-            "description": "The ID of the course"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A list of quizzes",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": { "type": "string" },
-                  "name": { "type": "string" }
+        },
+        "/quizzes": {
+            "get": {
+                "summary": "Get Quizzes",
+                "description": "Retrieve a list of quizzes for a specific course",
+                "parameters": [
+                    {
+                        "name": "courseId",
+                        "in": "query",
+                        "required": true,
+                        "type": "string",
+                        "description": "The ID of the course"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A list of quizzes",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
-              }
             }
-          }
-        }
-      }
-    },
-    "/quiz-question": {
-      "get": {
-        "summary": "Get Quiz Question",
-        "description": "Retrieve the next question for a student in a specific course",
-        "parameters": [
-          {
-            "name": "courseId",
-            "in": "query",
-            "required": true,
-            "type": "string",
-            "description": "The ID of the course"
-          },
-          {
-            "name": "studentId",
-            "in": "query",
-            "required": true,
-            "type": "string",
-            "description": "The ID of the student"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The next quiz question",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "question": { "type": "string" },
-                "options": {
-                  "type": "array",
-                  "items": { "type": "string" }
-                },
-                "correctAnswer": { "type": "string" }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/get-course-report": {
-      "get": {
-        "summary": "Get Course Report",
-        "description": "Retrieve a detailed course report",
-        "parameters": [
-          {
-            "name": "courseId",
-            "in": "query",
-            "required": true,
-            "type": "string",
-            "description": "The ID of the course"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A detailed course report",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "report": { "type": "string" }
-              }
-            }
-          },
-          "400": {
-            "description": "Missing courseId parameter"
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        }
-      }
-    },
-    "/students": {
-      "get": {
-        "summary": "Get Students",
-        "description": "Retrieve a list of students, optionally filtered by establishment",
-        "parameters": [
-          {
-            "name": "establishmentId",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "description": "The ID of the establishment"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A list of students",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": { "type": "string" },
-                  "full_name": { "type": "string" }
+        },
+        "/quiz-question": {
+            "get": {
+                "summary": "Get Quiz Question",
+                "description": "Retrieve the next question for a student in a specific course",
+                "parameters": [
+                    {
+                        "name": "courseId",
+                        "in": "query",
+                        "required": true,
+                        "type": "string",
+                        "description": "The ID of the course"
+                    },
+                    {
+                        "name": "studentId",
+                        "in": "query",
+                        "required": true,
+                        "type": "string",
+                        "description": "The ID of the student"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The next quiz question",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "question": {
+                                    "type": "string"
+                                },
+                                "options": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                },
+                                "correctAnswer": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
                 }
-              }
             }
-          }
-        }
-      }
-    },
-    "/student-courses": {
-      "get": {
-        "summary": "Get Student Courses",
-        "description": "Retrieve a list of courses available to a student",
-        "parameters": [
-          {
-            "name": "studentId",
-            "in": "query",
-            "required": true,
-            "type": "string",
-            "description": "The ID of the student"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "A list of courses",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": { "type": "string" },
-                  "name": { "type": "string" }
+        },
+        "/get-course-report": {
+            "get": {
+                "summary": "Get Course Report",
+                "description": "Retrieve a detailed course report",
+                "parameters": [
+                    {
+                        "name": "courseId",
+                        "in": "query",
+                        "required": true,
+                        "type": "string",
+                        "description": "The ID of the course"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A detailed course report",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "report": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Missing courseId parameter"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
                 }
-              }
             }
-          }
+        },
+        "/students": {
+            "get": {
+                "summary": "Get Students",
+                "description": "Retrieve a list of students, optionally filtered by establishment",
+                "parameters": [
+                    {
+                        "name": "establishmentId",
+                        "in": "query",
+                        "required": false,
+                        "type": "string",
+                        "description": "The ID of the establishment"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A list of students",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "string"
+                                    },
+                                    "full_name": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/student-courses": {
+            "get": {
+                "summary": "Get Student Courses",
+                "description": "Retrieve a list of courses available to a student",
+                "parameters": [
+                    {
+                        "name": "studentId",
+                        "in": "query",
+                        "required": true,
+                        "type": "string",
+                        "description": "The ID of the student"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A list of courses",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "string"
+                                    },
+                                    "name": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/": {
+            "get": {
+                "summary": "Auto-generated endpoint description",
+                "description": "Auto-generated endpoint description",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "example": {}
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Auto-generated endpoint description",
+                "description": "Auto-generated endpoint description",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "example": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/approve": {
+            "post": {
+                "summary": "Auto-generated endpoint description",
+                "description": "Auto-generated endpoint description",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "example": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/get-course-report": {
+            "get": {
+                "summary": "Auto-generated endpoint description",
+                "description": "Auto-generated endpoint description",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "example": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/docs": {
+            "get": {
+                "summary": "Auto-generated endpoint description",
+                "description": "Auto-generated endpoint description",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "example": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/finish": {
+            "get": {
+                "summary": "Auto-generated endpoint description",
+                "description": "Auto-generated endpoint description",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "example": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/get-quiz-question": {
+            "post": {
+                "summary": "Auto-generated endpoint description",
+                "description": "Auto-generated endpoint description",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "example": {}
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "summary": "Auto-generated endpoint description",
+                "description": "Auto-generated endpoint description",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "example": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/save-course": {
+            "post": {
+                "summary": "Auto-generated endpoint description",
+                "description": "Auto-generated endpoint description",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "example": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/performance": {
+            "get": {
+                "summary": "Auto-generated endpoint description",
+                "description": "Auto-generated endpoint description",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "example": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/get-next-question": {
+            "get": {
+                "summary": "Auto-generated endpoint description",
+                "description": "Auto-generated endpoint description",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "example": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/swagger/swagger.json": {
+            "get": {
+                "summary": "Auto-generated endpoint description",
+                "description": "Auto-generated endpoint description",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "example": {}
+                            }
+                        }
+                    }
+                }
+            }
         }
-      }
     }
-  }
 }

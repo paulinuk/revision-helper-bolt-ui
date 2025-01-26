@@ -1,25 +1,14 @@
-from flask import Blueprint
+from flask import Blueprint, send_from_directory
+from flask_swagger_ui import get_swaggerui_blueprint
+import os
 
 swagger_ui_blueprint = Blueprint('swagger_ui', __name__)
 
-@swagger_ui_blueprint.route('/api/docs')
-def swagger_ui():
-    return '''
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <title>Swagger UI</title>
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/3.36.0/swagger-ui.css" rel="stylesheet">
-    </head>
-    <body>
-        <div id="swagger-ui"></div>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/3.36.0/swagger-ui-bundle.js"></script>
-        <script>
-            const ui = SwaggerUIBundle({
-                url: '/api/swagger/swagger.json',  // Ensure this path is correct
-                dom_id: '#swagger-ui',
-            });
-        </script>
-    </body>
-    </html>
-    '''
+SWAGGER_URL = "/api/docs"
+API_URL = "/api/swagger.json"  # Correct path
+
+swagger_blueprint = get_swaggerui_blueprint(SWAGGER_URL, API_URL)
+
+@swagger_ui_blueprint.route('/api/swagger.json')
+def swagger_json():
+    return send_from_directory(os.getcwd(), 'swagger.json')  # Serve from root directory
