@@ -3,6 +3,8 @@ import yaml
 import openai
 import json
 from collections import defaultdict
+from crewai.agents.questions_agent import QuestionsAgent  # Updated import
+from crewai.agents.course_overview_agent import CourseOverviewAgent  # Updated import
 
 class CoursesAgent:
     def __init__(self):

@@ -4,7 +4,7 @@ import openai
 import json
 from datetime import datetime
 from collections import defaultdict
-from backend.crewai.agents.student_quiz_quality_agent import StudentQuizQualityAgent
+from crewai.agents.student_quiz_quality_agent import StudentQuizQualityAgent  # Updated import
 
 class StudentQuizAgent:
   MAX_ATTEMPTS = 10  # Maximum number of attempts to find an acceptable question

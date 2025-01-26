@@ -2,7 +2,7 @@ import sqlite3
 import yaml
 import openai
 import json
-from backend.crewai.agents.question_quality_agent import QuestionQualityAgent
+from crewai.agents.question_quality_agent import QuestionQualityAgent  # Updated import
 
 class QuestionsAgent:
   def __init__(self):
