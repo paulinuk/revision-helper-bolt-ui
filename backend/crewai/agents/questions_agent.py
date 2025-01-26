@@ -68,7 +68,7 @@ class QuestionsAgent:
         additional_distractors = json.loads(ai_response.choices[0].text.strip())
         answers.extend(additional_distractors)
 
-      if self.quality_agent.evaluate_question(course_id, proposed_question, answers, correct_answer, topic, difficulty_level):
+      if self.quality_agent.evaluate_course_question(course_id, proposed_question, answers, correct_answer, topic, difficulty_level):
         cursor.execute('''
         INSERT INTO questions (text, options, correct_answer, course_id, topic, difficulty_level)
         VALUES (?, ?, ?, ?, ?, ?)
