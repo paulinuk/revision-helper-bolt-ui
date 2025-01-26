@@ -1,12 +1,123 @@
+import os
 import sqlite3
 import json
 from datetime import datetime
 
 def seed_data():
-    conn = sqlite3.connect('local_database/revision_helper.db')
+    # Define the path to the database relative to the script's location
+    db_path = os.path.join(os.path.dirname(__file__), '../local_database/revision_helper.db')
+    db_dir = os.path.dirname(db_path)
+
+    # Create the directory if it doesn't exist
+    if not os.path.exists(db_dir):
+        os.makedirs(db_dir)
+
+    # Remove the existing database file if it exists
+    if os.path.exists(db_path):
+        os.remove(db_path)
+
+    # Connect to the database
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
-    # Insert sample establishments
+    # Create tables
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS establishments (
+        id INTEGER PRIMARY KEY,
+        name TEXT NOT NULL
+    )
+    ''')
+
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS courses (
+        id INTEGER PRIMARY KEY,
+        name TEXT NOT NULL,
+        establishment_id INTEGER,
+        course_overview TEXT,
+        approved BOOLEAN DEFAULT FALSE,
+        FOREIGN KEY (establishment_id) REFERENCES establishments(id)
+    )
+    ''')
+
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS quizzes (
+        id INTEGER PRIMARY KEY,
+        name TEXT NOT NULL,
+        course_id INTEGER,
+        quiz_date DATE NOT NULL,
+        quiz_number INTEGER,
+        student_id INTEGER,
+        started BOOLEAN DEFAULT FALSE,
+        FOREIGN KEY (course_id) REFERENCES courses(id),
+        FOREIGN KEY (student_id) REFERENCES students(id)
+    )
+    ''')
+
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS questions (
+        id INTEGER PRIMARY KEY,
+        text TEXT NOT NULL,
+        options TEXT NOT NULL,
+        correct_answer TEXT NOT NULL,
+        quiz_id INTEGER,
+        topic TEXT,
+        difficulty_level INTEGER,
+        FOREIGN KEY (quiz_id) REFERENCES quizzes(id)
+    )
+    ''')
+
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS student_performance (
+        id INTEGER PRIMARY KEY,
+        student_id INTEGER NOT NULL,
+        course_id INTEGER NOT NULL,
+        quiz_id INTEGER NOT NULL,
+        question_id INTEGER NOT NULL,
+        provided_answer TEXT,
+        is_correct BOOLEAN,
+        answer_date DATE NOT NULL,
+        FOREIGN KEY (course_id) REFERENCES courses(id),
+        FOREIGN KEY (quiz_id) REFERENCES quizzes(id),
+        FOREIGN KEY (question_id) REFERENCES questions(id)
+    )
+    ''')
+
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS student_question_history (
+        student_id INTEGER NOT NULL,
+        question_id INTEGER NOT NULL,
+        last_asked_date DATE,
+        PRIMARY KEY (student_id, question_id),
+        FOREIGN KEY (question_id) REFERENCES questions(id)
+    )
+    ''')
+
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS course_materials (
+        id INTEGER PRIMARY KEY,
+        course_id INTEGER NOT NULL,
+        name TEXT NOT NULL,
+        upload_date DATE NOT NULL,
+        materialType TEXT NOT NULL,
+        rawData BLOB NOT NULL,
+        extractedData TEXT,
+        FOREIGN KEY (course_id) REFERENCES courses(id)
+    )
+    ''')
+
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS students (
+        id INTEGER PRIMARY KEY,
+        forename TEXT NOT NULL,
+        surname TEXT NOT NULL,
+        full_name TEXT NOT NULL,
+        ability_level INTEGER NOT NULL CHECK(ability_level BETWEEN 1 AND 10),
+        establishment_id INTEGER,
+        FOREIGN KEY (establishment_id) REFERENCES establishments(id)
+    )
+    ''')
+
+    # Insert sample data
     establishments = [
         (1, 'University A'),
         (2, 'College B'),
@@ -14,7 +125,6 @@ def seed_data():
     ]
     cursor.executemany('INSERT INTO establishments (id, name) VALUES (?, ?)', establishments)
 
-    # Insert sample courses with course_overviews
     courses = [
         (1, 'Mathematics', 1, 'This course covers fundamental mathematical concepts including algebra, calculus, and geometry.', True),
         (2, 'Physics', 1, 'Explore the principles of physics, including mechanics, thermodynamics, and electromagnetism.', True),
@@ -25,7 +135,6 @@ def seed_data():
     ]
     cursor.executemany('INSERT INTO courses (id, name, establishment_id, course_overview, approved) VALUES (?, ?, ?, ?, ?)', courses)
 
-    # Insert sample students
     students = [
         (1, 'Alice', 'Smith', 'Alice Smith', 8, 1),
         (2, 'Bob', 'Johnson', 'Bob Johnson', 5, 2),
@@ -40,7 +149,6 @@ def seed_data():
     ]
     cursor.executemany('INSERT INTO students (id, forename, surname, full_name, ability_level, establishment_id) VALUES (?, ?, ?, ?, ?, ?)', students)
 
-    # Insert sample quizzes
     quizzes = [
         (1, 'Algebra Basics', 1, '2023-10-01', 1, 1, True),
         (2, 'Calculus Intro', 1, '2023-10-02', 2, 1, True),
@@ -49,7 +157,6 @@ def seed_data():
     ]
     cursor.executemany('INSERT INTO quizzes (id, name, course_id, quiz_date, quiz_number, student_id, started) VALUES (?, ?, ?, ?, ?, ?, ?)', quizzes)
 
-    # Insert sample questions with JSON options
     questions = [
         (1, 'What is 2 + 2?', json.dumps(['3', '4', '5', '6']), '4', 1, 'Arithmetic', 1),
         (2, 'What is the square root of 16?', json.dumps(['2', '4', '6', '8']), '4', 1, 'Arithmetic', 2),
@@ -57,7 +164,6 @@ def seed_data():
     ]
     cursor.executemany('INSERT INTO questions (id, text, options, correct_answer, quiz_id, topic, difficulty_level) VALUES (?, ?, ?, ?, ?, ?, ?)', questions)
 
-    # Insert sample student performance
     student_performance = [
         (1, 1, 1, 1, 1, '4', True, '2023-10-01'),
         (2, 1, 1, 1, 2, '4', True, '2023-10-01'),
@@ -65,7 +171,6 @@ def seed_data():
     ]
     cursor.executemany('INSERT INTO student_performance (id, student_id, course_id, quiz_id, question_id, provided_answer, is_correct, answer_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', student_performance)
 
-    # Insert sample student question history
     student_question_history = [
         (1, 1, '2023-09-30'),
         (1, 2, '2023-09-30'),
@@ -73,7 +178,6 @@ def seed_data():
     ]
     cursor.executemany('INSERT INTO student_question_history (student_id, question_id, last_asked_date) VALUES (?, ?, ?)', student_question_history)
 
-    # Insert sample course materials
     course_materials = [
         (1, 1, 'Algebra Textbook', '2023-10-01', 'staticDocument', b'Raw data for Algebra Textbook', 'This textbook covers basic algebraic concepts including variables, equations, and functions.'),
         (2, 2, 'Physics Notes', '2023-10-02', 'handwritten', b'Raw data for Physics Notes', 'These notes include fundamental physics principles such as Newton\'s laws, energy, and momentum.'),

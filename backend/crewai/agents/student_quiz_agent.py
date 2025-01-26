@@ -16,7 +16,7 @@ class StudentQuizAgent:
       config = json.load(file)
       openai.api_key = config['openai_api_key']
 
-  def get_next_question(self, student_id, course_id, question_number):
+  def get_next_question(self, student_id, course_id, question_number, difficultyLevel=None, topicSelectionMethod='all', selectedTopics=[]):
     cursor = self.conn.cursor()
 
     # Check for an existing unstarted quiz
@@ -52,17 +52,24 @@ class StudentQuizAgent:
         ''', (student_id, course_id))
         quiz_id = cursor.fetchone()[0]
 
-    # Fetch the student's ability level
-    cursor.execute('''
-    SELECT ability_level FROM students WHERE id = ?
-    ''', (student_id,))
-    student_ability_level = cursor.fetchone()[0]
+    # Fetch the student's ability level or use the provided difficulty level
+    if difficultyLevel is not None:
+      student_ability_level = difficultyLevel
+    else:
+      cursor.execute('''
+      SELECT ability_level FROM students WHERE id = ?
+      ''', (student_id,))
+      student_ability_level = cursor.fetchone()[0]
 
     # Fetch all questions for the given course_id
     cursor.execute('''
     SELECT id, text, options, correct_answer, topic, difficulty_level FROM questions WHERE course_id = ?
     ''', (course_id,))
     available_questions = cursor.fetchall()
+
+    # Filter questions based on topic selection
+    if topicSelectionMethod == 'specific' and selectedTopics:
+      available_questions = [q for q in available_questions if q[4] in selectedTopics]
 
     # Extract all previous performance information for the student
     cursor.execute('''
@@ -76,10 +83,28 @@ class StudentQuizAgent:
     if not remaining_questions:
       return None  # No more questions available
 
-    # Prioritize questions based on the student's ability level and weaker topics
+    # Calculate weaker topics based on lowest correct score percentages
+    cursor.execute('''
+    SELECT q.topic, COUNT(*) as total, SUM(sp.is_correct) as correct
+    FROM student_performance sp
+    JOIN questions q ON sp.question_id = q.id
+    WHERE sp.student_id = ? AND q.course_id = ?
+    GROUP BY q.topic
+    ''', (student_id, course_id))
+    topic_performance = cursor.fetchall()
+
+    topic_weakness = {
+      topic: (correct / total) if total > 0 else 0
+      for topic, total, correct in topic_performance
+    }
+
+    # Sort topics by weakness (lower score percentage means weaker)
+    sorted_topics = sorted(topic_weakness, key=topic_weakness.get)
+
+    # Prioritize questions based on weaker topics and student's ability level
     prioritized_questions = sorted(
       remaining_questions,
-      key=lambda q: (abs(q[5] - student_ability_level), -topic_weakness.get(q[4], 0))  # Sort by closeness to ability level and weakness score
+      key=lambda q: (sorted_topics.index(q[4]), abs(q[5] - student_ability_level))  # Sort by topic weakness and closeness to ability level
     )
 
     # Prepare data for AI to determine the next question
