@@ -38,3 +38,16 @@ class StudentsAgent:
         ''', (student_id,))
         courses = cursor.fetchall()
         return [{"id": course[0], "name": course[1]} for course in courses]
+
+    def get_students(self, establishment_id=None):
+        cursor = self.conn.cursor()
+        if establishment_id:
+            cursor.execute('''
+            SELECT id, full_name FROM students WHERE establishment_id = ? ORDER BY full_name
+            ''', (establishment_id,))
+        else:
+            cursor.execute('''
+            SELECT id, full_name FROM students ORDER BY full_name
+            ''')
+        students = cursor.fetchall()
+        return [{"id": student[0], "full_name": student[1]} for student in students]
