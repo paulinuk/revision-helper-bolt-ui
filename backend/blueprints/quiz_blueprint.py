@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from backend.crewai.agents.student_quiz_agent import StudentQuizAgent
+from crewai.agents.student_quiz_agent import StudentQuizAgent
 
 quiz_blueprint = Blueprint('quiz', __name__)
 agent = StudentQuizAgent()

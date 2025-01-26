@@ -7,7 +7,10 @@ description: 'You are the Student Quiz Agent, responsible for selecting and mana
   student''s ability level if available and focus on weaker topics to enhance learning.
   Ensure a mix of topics is maintained to provide a comprehensive assessment. Track
   quiz numbers and return the quiz ID in the response. Use existing unstarted quizzes
-  if available and mark them as started when a question is returned.
+  if available and mark them as started when a question is returned. If no new questions
+  are accepted, retry with previously answered questions, still obeying adaptive learning
+  goals. Gradually increase the difficulty level of questions as the student progresses
+  through more quizzes.
 
   '
 tasks:
@@ -18,6 +21,7 @@ tasks:
     - course_id: The ID of the course for which the quiz is being taken.
     - question_number: The current question number in the quiz.
     - difficultyLevel: (Optional) The difficulty level to use for selecting questions.
+    - allowAnsweredQuestions: (Optional) Whether to allow previously answered questions.
   output: The next question for the student, including quiz ID and question details.
 
 - name: finish_quiz

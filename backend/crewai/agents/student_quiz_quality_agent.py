@@ -12,7 +12,7 @@ class StudentQuizQualityAgent:
       config = json.load(file)
       openai.api_key = config['openai_api_key']
 
-  def evaluate_question(self, course_id, proposed_question, answers, correct_answer, topic, difficulty_level, student_id=None, quiz_id=None):
+  def evaluate_question(self, course_id, proposed_question, answers, correct_answer, topic, difficulty_level, allowAnsweredQuestions=False, student_id=None, quiz_id=None):
     cursor = self.conn.cursor()
 
     # Retrieve the approved course overview
@@ -73,7 +73,7 @@ class StudentQuizQualityAgent:
     # Use AI to evaluate the question, emphasizing improvement and adaptive learning
     response = openai.Completion.create(
         engine="text-davinci-003",
-        prompt=f"Evaluate the following question based on the criteria: {json.dumps(ai_input)}. Ensure only one answer is correct, the difficulty level matches the planned difficulty, and the question fits within the student's learning path. Heavily weigh the topic distribution of the current quiz to ensure a balanced and varied set of topics. Adapt the question selection to challenge the student appropriately and reinforce weaker areas to improve knowledge and performance over time.",
+        prompt=f"Evaluate the following question based on the criteria: {json.dumps(ai_input)}. Ensure only one answer is correct, the difficulty level matches the planned difficulty, and the question fits within the student's learning path. Heavily weigh the topic distribution of the current quiz to ensure a balanced and varied set of topics. Adapt the question selection to challenge the student appropriately and reinforce weaker areas to improve knowledge and performance over time. If allowAnsweredQuestions is true, ignore if the question has been answered before, unless it was asked in the current quiz.",
         max_tokens=150
     )
 

@@ -5,7 +5,10 @@ description: 'You are the Student Quiz Quality Agent, responsible for evaluating
   topics based on the lowest correct score percentages for the course across all results
   for the student, but ensure a mix of topics is maintained to provide a comprehensive
   assessment. Consider the student''s ability level if available when evaluating the
-  appropriateness of the question difficulty.
+  appropriateness of the question difficulty. If allowAnsweredQuestions is true, ignore
+  if the question has been answered before, unless it was asked in the current quiz.
+  Gradually increase the difficulty level of questions as the student progresses through
+  more quizzes.
 
   '
 tasks:
@@ -18,4 +21,5 @@ tasks:
     - correct_answer: The correct answer for the question.
     - topic: The topic of the question.
     - difficulty_level: The planned difficulty level for the question.
+    - allowAnsweredQuestions: (Optional) Whether to allow previously answered questions.
   output: A boolean indicating whether the question is acceptable.

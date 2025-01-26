@@ -1,7 +1,8 @@
-ehivimport sqlite3
+import sqlite3
 import yaml
-from backend.crewai.agents.questions_agent import QuestionsAgent
-from backend.crewai.agents.course_overview_agent import CourseOverviewAgent
+import openai
+import json
+from collections import defaultdict
 
 class CoursesAgent:
     def __init__(self):
@@ -47,3 +48,63 @@ class CoursesAgent:
 
         self.conn.commit()
         return course_id
+
+    def generate_course_report(self, course_id):
+        cursor = self.conn.cursor()
+
+        # Fetch all quizzes for the course
+        cursor.execute('''
+        SELECT id, quiz_date FROM quizzes WHERE course_id = ?
+        ''', (course_id,))
+        quizzes = cursor.fetchall()
+
+        # Collect performance data for each quiz
+        performance_data = []
+        topic_performance_over_time = defaultdict(list)
+
+        for quiz_id, quiz_date in quizzes:
+            cursor.execute('''
+            SELECT q.id, q.text, q.correct_answer, sp.provided_answer, q.topic, sp.is_correct
+            FROM student_performance sp
+            JOIN questions q ON sp.question_id = q.id
+            WHERE sp.quiz_id = ?
+            ''', (quiz_id,))
+            quiz_performance = cursor.fetchall()
+            performance_data.extend(quiz_performance)
+
+            # Calculate topic performance for this quiz
+            topic_summary = defaultdict(lambda: {'correct': 0, 'total': 0})
+            for _, _, _, _, topic, is_correct in quiz_performance:
+                topic_summary[topic]['total'] += 1
+                if is_correct:
+                    topic_summary[topic]['correct'] += 1
+
+            # Store topic performance over time
+            for topic, data in topic_summary.items():
+                score_percentage = (data['correct'] / data['total']) * 100 if data['total'] > 0 else 0
+                topic_performance_over_time[topic].append((quiz_date, score_percentage))
+
+        # Calculate overall topic performance
+        topic_summary_list = [
+            {
+                "TopicName": topic,
+                "PerformanceOverTime": topic_performance_over_time[topic]
+            }
+            for topic in topic_performance_over_time
+        ]
+
+        # Prepare data for AI report generation
+        report_input = {
+            "performance_data": performance_data,
+            "topic_summary": topic_summary_list
+        }
+
+        # Use AI to generate a detailed report
+        response = openai.Completion.create(
+            engine="text-davinci-003",
+            prompt=f"Write a detailed report about the student's performance from the perspective of a teacher, based on the following data: {json.dumps(report_input)}. Highlight improvements or declines in topic understanding over time and suggest remedies for any declines.",
+            max_tokens=1000
+        )
+
+        report = response.choices[0].text.strip()
+        return report

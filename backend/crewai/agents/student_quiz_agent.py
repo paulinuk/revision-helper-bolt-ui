@@ -7,6 +7,8 @@ from collections import defaultdict
 from backend.crewai.agents.student_quiz_quality_agent import StudentQuizQualityAgent
 
 class StudentQuizAgent:
+  MAX_ATTEMPTS = 10  # Maximum number of attempts to find an acceptable question
+
   def __init__(self):
     self.conn = sqlite3.connect('local_database/revision_helper.db')
     self.quality_agent = StudentQuizQualityAgent()
@@ -16,7 +18,7 @@ class StudentQuizAgent:
       config = json.load(file)
       openai.api_key = config['openai_api_key']
 
-  def get_next_question(self, student_id, course_id, question_number, difficultyLevel=None, topicSelectionMethod='all', selectedTopics=[]):
+  def get_next_question(self, student_id, course_id, question_number, difficultyLevel=None, topicSelectionMethod='all', selectedTopics=[], allowAnsweredQuestions=False):
     cursor = self.conn.cursor()
 
     # Check for an existing unstarted quiz
@@ -61,13 +63,8 @@ class StudentQuizAgent:
       ''', (student_id,))
       student_ability_level = cursor.fetchone()[0]
 
-    if student_ability_level is None
-      # Fetch the student's ability level
-      cursor.execute('''
-      SELECT ability_level FROM students WHERE id = ?
-      ''', (student_id,))
-      result = cursor.fetchone()
-      student_ability_level = result[0] if result else None
+    # Gradually increase difficulty level as the student progresses
+    target_difficulty = min(10, student_ability_level + 1)
 
     # Fetch all questions for the given course_id
     cursor.execute('''
@@ -88,7 +85,7 @@ class StudentQuizAgent:
     # Filter out questions that have already been answered
     remaining_questions = [q for q in available_questions if q[0] not in answered_questions]
 
-    if not remaining_questions:
+    if not remaining_questions and not allowAnsweredQuestions:
       return None  # No more questions available
 
     # Calculate weaker topics based on lowest correct score percentages
@@ -109,17 +106,11 @@ class StudentQuizAgent:
     # Sort topics by weakness (lower score percentage means weaker)
     sorted_topics = sorted(topic_weakness, key=topic_weakness.get)
 
-    # Prioritize questions based on weaker topics and student's ability level if available
-    if student_ability_level is not None:
-      prioritized_questions = sorted(
-        remaining_questions,
-        key=lambda q: (sorted_topics.index(q[4]), abs(q[5] - student_ability_level))  # Sort by topic weakness and closeness to ability level
-      )
-    else:
-      prioritized_questions = sorted(
-        remaining_questions,
-        key=lambda q: sorted_topics.index(q[4])  # Sort by topic weakness only
-      )
+    # Prioritize questions based on weaker topics and target difficulty level
+    prioritized_questions = sorted(
+      remaining_questions,
+      key=lambda q: (sorted_topics.index(q[4]), abs(q[5] - target_difficulty))  # Sort by topic weakness and closeness to target difficulty
+    )
 
     # Prepare data for AI to determine the next question
     ai_input = {
@@ -136,19 +127,23 @@ class StudentQuizAgent:
       "student_id": student_id
     }
 
-    # Keep trying until a question is accepted by the quality agent
-    while prioritized_questions:
+    attempts = 0  # Initialize attempt counter
+
+    # Keep trying until a question is accepted by the quality agent or max attempts reached
+    while prioritized_questions and attempts < self.MAX_ATTEMPTS:
+      attempts += 1  # Increment attempt counter
+
       # Use AI to suggest the next question based on predefined rules
       response = openai.Completion.create(
         engine="text-davinci-003",
-        prompt=f"Based on the student's performance and the remaining questions, suggest the most appropriate next question, prioritizing weaker topics and matching the student's ability level if available: {json.dumps(ai_input)}",
+        prompt=f"Based on the student's performance and the remaining questions, suggest the most appropriate next question, prioritizing weaker topics and matching the target difficulty level: {json.dumps(ai_input)}",
         max_tokens=150
       )
 
       suggested_question = json.loads(response.choices[0].text.strip())
 
       # Use the quality agent to approve or reject the suggested question
-      if self.quality_agent.evaluate_question(course_id, suggested_question['text'], suggested_question['options'], suggested_question['correct_answer'], suggested_question['topic'], suggested_question['difficulty_level']):
+      if self.quality_agent.evaluate_question(course_id, suggested_question['text'], suggested_question['options'], suggested_question['correct_answer'], suggested_question['topic'], suggested_question['difficulty_level'], allowAnsweredQuestions):
         # Mark the quiz as started
         cursor.execute('''
         UPDATE quizzes SET started = TRUE WHERE id = ?
@@ -160,7 +155,11 @@ class StudentQuizAgent:
       # Remove the rejected question from the pool
       prioritized_questions = [q for q in prioritized_questions if q[0] != suggested_question['id']]
 
-    return None  # No acceptable question found
+    # If no new questions are accepted, try with answered questions
+    if not allowAnsweredQuestions:
+      return self.get_next_question(student_id, course_id, question_number, difficultyLevel, topicSelectionMethod, selectedTopics, allowAnsweredQuestions=True)
+
+    return None  # No acceptable question found or max attempts reached
 
   def finish_quiz(self, quiz_id):
     cursor = self.conn.cursor()
