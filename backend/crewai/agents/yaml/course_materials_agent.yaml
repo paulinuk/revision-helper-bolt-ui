@@ -7,13 +7,22 @@ description: 'You are the Course Materials Agent, responsible for managing and p
 tasks:
 - name: add_material
   description: Automatically generated task for add_material.
-  input: Relevant input parameters.
-  output: Expected output.
+  input: 
+    - course_id: The ID of the course to which the material belongs.
+    - name: The name of the material.
+    - materialType: The type of the material (e.g., document, video).
+    - rawData: The raw data of the material.
+  output: Confirmation of material addition.
+
 - name: extract_text
   description: Automatically generated task for extract_text.
-  input: Relevant input parameters.
-  output: Expected output.
+  input: 
+    - rawData: The raw data from which text needs to be extracted.
+    - materialType: The type of the material.
+  output: Extracted text from the raw data.
+
 - name: get_materials
   description: Automatically generated task for get_materials.
-  input: Relevant input parameters.
-  output: Expected output.
+  input: 
+    - course_id: The ID of the course to retrieve materials for.
+  output: A list of materials for the specified course.

@@ -8,9 +8,13 @@ description: 'You are the Course Overview Agent, responsible for generating and 
 tasks:
 - name: generate_overview
   description: Automatically generated task for generate_overview.
-  input: Relevant input parameters.
-  output: Expected output.
+  input: 
+    - course_id: The ID of the course for which the overview is generated.
+    - overview_mode: The mode of overview generation (static or AiGenerated).
+  output: The generated course overview.
+
 - name: approve_overview
   description: Automatically generated task for approve_overview.
-  input: Relevant input parameters.
-  output: Expected output.
+  input: 
+    - course_id: The ID of the course for which the overview is approved.
+  output: Confirmation of overview approval.

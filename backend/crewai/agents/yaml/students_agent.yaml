@@ -7,5 +7,19 @@ description: 'You are the Students Agent, responsible for managing student data 
 tasks:
 - name: get_student_performance
   description: Automatically generated task for get_student_performance.
-  input: Relevant input parameters.
-  output: Expected output.
+  input: 
+    - student_id: The ID of the student whose performance is being retrieved.
+    - course_id: The ID of the course for which performance is being retrieved.
+  output: Performance data and feedback for the student in the specified course.
+
+- name: get_courses_for_student
+  description: Automatically generated task for get_courses_for_student.
+  input: 
+    - student_id: The ID of the student to retrieve courses for.
+  output: A list of courses available to the student.
+
+- name: get_students
+  description: Automatically generated task for get_students.
+  input: 
+    - establishment_id: (Optional) The ID of the establishment to filter students by.
+  output: A list of students, optionally filtered by establishment.

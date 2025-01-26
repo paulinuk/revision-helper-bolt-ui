@@ -39,7 +39,7 @@ class QuestionQualityAgent:
     # Use AI to evaluate the question
     response = openai.Completion.create(
       engine="text-davinci-003",
-      prompt=f"Evaluate the following question based on the criteria: {json.dumps(ai_input)}. Ensure only one answer is correct.",
+      prompt=f"Evaluate the following question based on the criteria: {json.dumps(ai_input)}. Ensure only one answer is correct and the difficulty level matches the planned difficulty.",
       max_tokens=150
     )
 

@@ -12,9 +12,14 @@ description: 'You are the Student Quiz Agent, responsible for selecting and mana
 tasks:
 - name: get_next_question
   description: Automatically generated task for get_next_question.
-  input: Relevant input parameters.
-  output: Expected output.
+  input: 
+    - student_id: The ID of the student taking the quiz.
+    - course_id: The ID of the course for which the quiz is being taken.
+    - question_number: The current question number in the quiz.
+  output: The next question for the student, including quiz ID and question details.
+
 - name: finish_quiz
   description: Automatically generated task for finish_quiz.
-  input: Relevant input parameters.
-  output: Expected output.
+  input: 
+    - quiz_id: The ID of the quiz being finished.
+  output: A summary of the student's performance in the quiz, including feedback and recommendations.

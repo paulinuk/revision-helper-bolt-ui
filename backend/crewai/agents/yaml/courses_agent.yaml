@@ -7,5 +7,6 @@ description: 'You are the Courses Agent, responsible for managing and retrieving
 tasks:
 - name: get_courses
   description: Automatically generated task for get_courses.
-  input: Relevant input parameters.
-  output: Expected output.
+  input: 
+    - establishment_id: The ID of the establishment to retrieve courses for.
+  output: A list of courses available at the specified establishment.

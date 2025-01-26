@@ -19,9 +19,19 @@ description: 'You are the Question Quality Agent, responsible for evaluating the
   If more than one answer is correct or could be deemed correct, the question must
   be rejected.
 
+  - Difficulty alignment: Ensure the question's difficulty matches the planned difficulty
+  level, considering both the complexity of the question and the complexity of finding
+  the correct answer.
+
   '
 tasks:
 - name: evaluate_question
   description: Automatically generated task for evaluate_question.
-  input: Relevant input parameters.
-  output: Expected output.
+  input: 
+    - course_id: The ID of the course to which the question belongs.
+    - proposed_question: The text of the proposed question.
+    - answers: A list of possible answers for the question.
+    - correct_answer: The correct answer for the question.
+    - topic: The topic of the question.
+    - difficulty_level: The planned difficulty level for the question.
+  output: A boolean indicating whether the question is acceptable.

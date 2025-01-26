@@ -5,9 +5,18 @@ description: 'You are the Questions Agent, responsible for generating and managi
   levels. The correct answer must be derived from the course overview, and distractors
   should be generated from the overview wherever possible.
 
+  The difficulty level of each question should be accurately assessed based on:
+  - The complexity of the question itself, including the depth of understanding required.
+  - The complexity of finding the correct answer, considering the cognitive effort needed.
+
+  Additionally, plan the difficulty of new questions based on the existing questions
+  for the course to provide a wide range of difficulties. For questions planned to
+  be more difficult, ensure that AI generates more complex questions and answers.
+
   '
 tasks:
 - name: generate_questions
   description: Automatically generated task for generate_questions.
-  input: Relevant input parameters.
-  output: Expected output.
+  input: 
+    - course_id: The ID of the course for which questions are being generated.
+  output: A list of generated questions with their details.

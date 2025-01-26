@@ -7,5 +7,5 @@ description: 'You are the Establishments Agent, tasked with managing and retriev
 tasks:
 - name: get_establishments
   description: Automatically generated task for get_establishments.
-  input: Relevant input parameters.
-  output: Expected output.
+  input: None
+  output: A list of all educational establishments.

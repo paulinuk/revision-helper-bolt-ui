@@ -28,10 +28,19 @@ class QuestionsAgent:
 
     course_overview = result[0]
 
+    # Retrieve existing questions to determine planned difficulty
+    cursor.execute('''
+    SELECT difficulty_level FROM questions WHERE course_id = ?
+    ''', (course_id,))
+    existing_difficulties = [row[0] for row in cursor.fetchall()]
+
+    # Calculate planned difficulty based on existing questions
+    planned_difficulty = self.calculate_planned_difficulty(existing_difficulties)
+
     # Use AI to generate a pool of questions strictly based on the course overview
     response = openai.Completion.create(
       engine="text-davinci-003",
-      prompt=f"Generate a diverse set of questions using only the following course overview. Ensure each question includes a correct answer derived from the overview and realistic distractors: {course_overview}",
+      prompt=f"Generate a diverse set of questions using only the following course overview. Ensure each question includes a correct answer derived from the overview and realistic distractors. Assess the difficulty level based on the complexity of the question and the complexity of finding the correct answer. Plan the difficulty to provide a wide range of difficulties, with more complex questions and answers for higher difficulty levels: {course_overview}",
       max_tokens=1000
     )
 
@@ -66,3 +75,11 @@ class QuestionsAgent:
         ''', (proposed_question, json.dumps(answers), correct_answer, course_id, topic, difficulty_level))
 
     self.conn.commit()
+
+  def calculate_planned_difficulty(self, existing_difficulties):
+    if not existing_difficulties:
+      return 5  # Default to medium difficulty if no existing questions
+
+    # Calculate the average difficulty and adjust to ensure a wide range
+    average_difficulty = sum(existing_difficulties) / len(existing_difficulties)
+    return max(1, min(10, round(average_difficulty)))

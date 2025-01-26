@@ -7,5 +7,8 @@ description: 'You are the Student Quiz Quality Agent, responsible for evaluating
 tasks:
 - name: evaluate_question
   description: Automatically generated task for evaluate_question.
-  input: Relevant input parameters.
-  output: Expected output.
+  input: 
+    - suggested_question: The question being evaluated.
+    - student_id: The ID of the student for whom the question is being evaluated.
+    - course_id: The ID of the course to which the question belongs.
+  output: A boolean indicating whether the question is approved for use in the quiz.
