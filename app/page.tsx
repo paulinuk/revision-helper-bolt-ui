@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { BuildingOffice2Icon, AcademicCapIcon, BookOpenIcon, PlayCircleIcon, ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
+import { BuildingOffice2Icon, AcademicCapIcon, ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
 import { API_BASE_URL } from './config';
 
 export default function Home() {
@@ -11,8 +11,6 @@ export default function Home() {
   const [selectedEstablishment, setSelectedEstablishment] = useState<string>('');
   const [courses, setCourses] = useState<any[]>([]);
   const [selectedCourse, setSelectedCourse] = useState<string>('');
-  const [quizzes, setQuizzes] = useState<any[]>([]);
-  const [selectedQuiz, setSelectedQuiz] = useState<string>('');
   const [flashcardCount, setFlashcardCount] = useState<number>(1);
   const studentId: string = '121'; // Hardcoded student ID
 
@@ -42,23 +40,6 @@ export default function Home() {
     }
   };
 
-  const fetchQuizzes = async (courseId: string) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/quizzes?courseId=${courseId}`);
-      if (!response.ok) throw new Error('Failed to fetch quizzes');
-      const data = await response.json();
-      setQuizzes(data);
-    } catch (error) {
-      console.error('Error fetching quizzes:', error);
-    }
-  };
-
-  const handleTakeQuiz = () => {
-    if (selectedQuiz) {
-      router.push(`/quiz/${selectedQuiz}?studentId=${studentId}`);
-    }
-  };
-
   const handleStartFlashcardSession = () => {
     if (flashcardCount > 0 && flashcardCount <= 5) {
       router.push(`/flashcards?courseId=${selectedCourse}&studentId=${studentId}&count=${flashcardCount}`);
@@ -85,7 +66,6 @@ export default function Home() {
               onChange={(e) => {
                 setSelectedEstablishment(e.target.value);
                 setSelectedCourse('');
-                setSelectedQuiz('');
                 fetchCourses(e.target.value);
               }}
               className="select-input"
@@ -108,8 +88,6 @@ export default function Home() {
                 value={selectedCourse}
                 onChange={(e) => {
                   setSelectedCourse(e.target.value);
-                  setSelectedQuiz('');
-                  fetchQuizzes(e.target.value);
                 }}
                 className="select-input"
               >
@@ -145,37 +123,6 @@ export default function Home() {
                 </button>
               </div>
             </div>
-          )}
-
-          {/* Quiz Selection */}
-          {selectedCourse && (
-            <div className="card">
-              <div className="flex items-center gap-3 mb-4">
-                <BookOpenIcon className="w-6 h-6 text-blue-600" />
-                <h2 className="text-lg font-semibold text-gray-800">Select Quiz</h2>
-              </div>
-              <select
-                value={selectedQuiz}
-                onChange={(e) => setSelectedQuiz(e.target.value)}
-                className="select-input"
-              >
-                <option value="">Choose a quiz...</option>
-                {quizzes.map((quiz: any) => (
-                  <option key={quiz.id} value={quiz.id}>{quiz.name}</option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          {/* Take Quiz Button */}
-          {selectedQuiz && (
-            <button
-              onClick={handleTakeQuiz}
-              className="btn-primary w-full"
-            >
-              <PlayCircleIcon className="w-5 h-5" />
-              Take Quiz
-            </button>
           )}
         </div>
       </div>

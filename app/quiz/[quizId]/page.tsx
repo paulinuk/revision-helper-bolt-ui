@@ -94,8 +94,8 @@ export default function QuizPage() {
     }
   };
 
-  const handleBackToSelection = () => {
-    router.push('/');
+  const handleBackToDashboard = () => {
+    router.push(`/studentdashboard?studentId=${studentId}`);
   };
 
   if (error) {
@@ -115,10 +115,10 @@ export default function QuizPage() {
             Try Again
           </button>
           <button
-            onClick={handleBackToSelection}
+            onClick={handleBackToDashboard}
             className="btn-secondary"
           >
-            Back to Selection
+            Back to Dashboard
           </button>
         </div>
       </div>
@@ -146,11 +146,11 @@ export default function QuizPage() {
       <div className="max-w-3xl mx-auto space-y-8 animate-fade-in">
         <div className="space-y-4">
           <button
-            onClick={handleBackToSelection}
+            onClick={handleBackToDashboard}
             className="btn-secondary"
           >
             <ArrowLeftIcon className="w-5 h-5" />
-            Back to Selection
+            Back to Dashboard
           </button>
 
           <div className="card">

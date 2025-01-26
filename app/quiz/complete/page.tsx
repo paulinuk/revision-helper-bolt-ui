@@ -29,8 +29,8 @@ export default function QuizCompletePage() {
     fetchQuizSummary();
   }, [quizId, studentId]);
 
-  const handleBackToSelection = () => {
-    router.push('/');
+  const handleBackToDashboard = () => {
+    router.push(`/studentdashboard?studentId=${studentId}`);
   };
 
   if (error) {
@@ -43,10 +43,10 @@ export default function QuizCompletePage() {
           </div>
         </div>
         <button
-          onClick={handleBackToSelection}
+          onClick={handleBackToDashboard}
           className="btn-secondary"
         >
-          Back to Selection
+          Back to Dashboard
         </button>
       </div>
     );
@@ -180,10 +180,10 @@ export default function QuizCompletePage() {
           </div>
 
           <button
-            onClick={handleBackToSelection}
+            onClick={handleBackToDashboard}
             className="btn-primary w-full"
           >
-            Take Another Quiz
+            Back to Dashboard
           </button>
         </div>
       </div>

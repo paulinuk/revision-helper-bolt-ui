@@ -44,8 +44,8 @@ export default function FlashcardPage() {
     setCurrentCardIndex((prevIndex) => (prevIndex + 1) % flashcards.length);
   };
 
-  const handleBackToSelection = () => {
-    router.push('/');
+  const handleBackToDashboard = () => {
+    router.push(`/studentdashboard?studentId=${studentId}`);
   };
 
   if (error) {
@@ -58,10 +58,10 @@ export default function FlashcardPage() {
           </div>
         </div>
         <button
-          onClick={handleBackToSelection}
+          onClick={handleBackToDashboard}
           className="btn-secondary"
         >
-          Back to Selection
+          Back to Dashboard
         </button>
       </div>
     );
@@ -85,11 +85,11 @@ export default function FlashcardPage() {
       <div className="max-w-3xl mx-auto space-y-8 animate-fade-in">
         <div className="space-y-4">
           <button
-            onClick={handleBackToSelection}
+            onClick={handleBackToDashboard}
             className="btn-secondary"
           >
             <ArrowLeftIcon className="w-5 h-5" />
-            Back to Selection
+            Back to Dashboard
           </button>
 
           <div className="card-container">

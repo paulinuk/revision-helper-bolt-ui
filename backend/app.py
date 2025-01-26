@@ -7,6 +7,8 @@ from blueprints.student_quiz import student_quiz_blueprint
 from blueprints.students import students_blueprint
 from blueprints.course_materials import course_materials_blueprint
 from blueprints.course_overview import course_overview_blueprint
+from blueprints.finish_quiz import finish_quiz_blueprint
+from blueprints.student_courses import student_courses_blueprint  # Import the new blueprint
 
 app = Flask(__name__)
 
@@ -19,6 +21,8 @@ app.register_blueprint(student_quiz_blueprint, url_prefix='/api/student_quiz')
 app.register_blueprint(students_blueprint, url_prefix='/api/students')
 app.register_blueprint(course_materials_blueprint, url_prefix='/api/course_materials')
 app.register_blueprint(course_overview_blueprint, url_prefix='/api/course_overview')
+app.register_blueprint(finish_quiz_blueprint, url_prefix='/api/finish_quiz')
+app.register_blueprint(student_courses_blueprint, url_prefix='/api/student-courses')  # Register the new blueprint
 
 if __name__ == '__main__':
   app.run(port=5000, debug=True)

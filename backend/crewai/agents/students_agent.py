@@ -28,3 +28,13 @@ class StudentsAgent:
 
         feedback = json.loads(response.choices[0].text.strip())
         return feedback if feedback else performance
+
+    def get_courses_for_student(self, student_id):
+        cursor = self.conn.cursor()
+        cursor.execute('''
+        SELECT c.id, c.name FROM courses c
+        JOIN students s ON c.establishment_id = s.establishment_id
+        WHERE s.id = ?
+        ''', (student_id,))
+        courses = cursor.fetchall()
+        return [{"id": course[0], "name": course[1]} for course in courses]
