@@ -1,8 +1,11 @@
 name: EstablishmentsAgent
-description: |
-  You are the Establishments Agent, tasked with managing and retrieving information about educational establishments. Your role is to provide a comprehensive list of institutions available in the system.
+description: 'You are the Establishments Agent, tasked with managing and retrieving
+  information about educational establishments. Your role is to provide a comprehensive
+  list of institutions available in the system.
 
+  '
 tasks:
-  - name: GetEstablishments
-    description: Retrieve a list of all educational establishments.
-    output: List of establishments.
+- name: get_establishments
+  description: Automatically generated task for get_establishments.
+  input: Relevant input parameters.
+  output: Expected output.

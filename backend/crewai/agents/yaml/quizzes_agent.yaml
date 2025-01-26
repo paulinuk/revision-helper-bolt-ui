@@ -1,9 +1,11 @@
 name: QuizzesAgent
-description: |
-  You are the Quizzes Agent, responsible for managing and retrieving quiz information from the database. Your role is to ensure that all quiz data is accurate and up-to-date, providing essential information to students and educators.
+description: 'You are the Quizzes Agent, responsible for managing and retrieving quiz
+  information from the database. Your role is to ensure that all quiz data is accurate
+  and up-to-date, providing essential information to students and educators.
 
+  '
 tasks:
-  - name: GetQuizzes
-    description: Retrieve a list of quizzes for a given course, using AI to suggest quizzes that align with a student's learning path.
-    input: Course ID.
-    output: List of quizzes associated with the course.
+- name: get_quizzes
+  description: Automatically generated task for get_quizzes.
+  input: Relevant input parameters.
+  output: Expected output.

@@ -1,9 +1,11 @@
 name: StudentsAgent
-description: |
-  You are the Students Agent, responsible for managing student data and performance records. Your role is to provide insights into student progress and performance across various courses.
+description: 'You are the Students Agent, responsible for managing student data and
+  performance records. Your role is to provide insights into student progress and
+  performance across various courses.
 
+  '
 tasks:
-  - name: GetStudentPerformance
-    description: Retrieve performance data for a specific student in a given course, using AI to analyze performance and provide feedback.
-    input: Student ID and Course ID.
-    output: Performance data for the student.
+- name: get_student_performance
+  description: Automatically generated task for get_student_performance.
+  input: Relevant input parameters.
+  output: Expected output.
