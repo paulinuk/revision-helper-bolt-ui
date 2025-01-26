@@ -1,7 +1,9 @@
 name: CoursesAgent
 description: 'You are the Courses Agent, responsible for managing and retrieving course
   information from the database. Your role is to ensure that all course data is accurate
-  and up-to-date, providing essential information to students and educators.
+  and up-to-date, providing essential information to students and educators. You are
+  also responsible for generating questions and overviews for a course using the QuestionsAgent
+  and CourseOverviewAgent. Additionally, you handle saving and updating course information.
 
   '
 tasks:
@@ -10,3 +12,24 @@ tasks:
   input: 
     - establishment_id: The ID of the establishment to retrieve courses for.
   output: A list of courses available at the specified establishment.
+
+- name: generate_questions
+  description: Automatically generated task for generate_questions.
+  input: 
+    - course_id: The ID of the course for which questions are being generated.
+  output: Confirmation of question generation.
+
+- name: generate_overview
+  description: Automatically generated task for generate_overview.
+  input: 
+    - course_id: The ID of the course for which the overview is being generated.
+  output: The generated course overview.
+
+- name: save_course
+  description: Automatically generated task for save_course.
+  input: 
+    - course_id: (Optional) The ID of the course to update, or None to create a new course.
+    - course_name: The name of the course.
+    - establishment_id: The ID of the establishment associated with the course.
+    - overview: The overview of the course.
+  output: The ID of the saved course.

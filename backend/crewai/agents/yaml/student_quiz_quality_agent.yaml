@@ -4,14 +4,18 @@ description: 'You are the Student Quiz Quality Agent, responsible for evaluating
   a balanced set of topics and avoid repetition unless necessary. Prioritize weaker
   topics based on the lowest correct score percentages for the course across all results
   for the student, but ensure a mix of topics is maintained to provide a comprehensive
-  assessment.
+  assessment. Consider the student''s ability level if available when evaluating the
+  appropriateness of the question difficulty.
 
   '
 tasks:
 - name: evaluate_question
   description: Automatically generated task for evaluate_question.
   input: 
-    - suggested_question: The question being evaluated.
-    - student_id: The ID of the student for whom the question is being evaluated.
     - course_id: The ID of the course to which the question belongs.
-  output: A boolean indicating whether the question is approved for use in the quiz.
+    - proposed_question: The text of the proposed question.
+    - answers: A list of possible answers for the question.
+    - correct_answer: The correct answer for the question.
+    - topic: The topic of the question.
+    - difficulty_level: The planned difficulty level for the question.
+  output: A boolean indicating whether the question is acceptable.

@@ -16,14 +16,14 @@ def create_tables():
     # Create tables
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS establishments (
-        id INTEGER PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL
     )
     ''')
 
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS courses (
-        id INTEGER PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         establishment_id INTEGER,
         course_overview TEXT,
@@ -34,7 +34,7 @@ def create_tables():
 
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS quizzes (
-        id INTEGER PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         course_id INTEGER,
         quiz_date DATE NOT NULL,
@@ -48,7 +48,7 @@ def create_tables():
 
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS questions (
-        id INTEGER PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         text TEXT NOT NULL,
         options TEXT NOT NULL,
         correct_answer TEXT NOT NULL,
@@ -61,7 +61,7 @@ def create_tables():
 
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS student_performance (
-        id INTEGER PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         student_id INTEGER NOT NULL,
         course_id INTEGER NOT NULL,
         quiz_id INTEGER NOT NULL,
@@ -87,7 +87,7 @@ def create_tables():
 
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS course_materials (
-        id INTEGER PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         course_id INTEGER NOT NULL,
         name TEXT NOT NULL,
         upload_date DATE NOT NULL,
@@ -100,7 +100,7 @@ def create_tables():
 
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS students (
-        id INTEGER PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         forename TEXT NOT NULL,
         surname TEXT NOT NULL,
         full_name TEXT NOT NULL,

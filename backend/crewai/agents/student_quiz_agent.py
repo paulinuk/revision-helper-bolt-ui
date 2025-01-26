@@ -61,6 +61,14 @@ class StudentQuizAgent:
       ''', (student_id,))
       student_ability_level = cursor.fetchone()[0]
 
+    if student_ability_level is None
+      # Fetch the student's ability level
+      cursor.execute('''
+      SELECT ability_level FROM students WHERE id = ?
+      ''', (student_id,))
+      result = cursor.fetchone()
+      student_ability_level = result[0] if result else None
+
     # Fetch all questions for the given course_id
     cursor.execute('''
     SELECT id, text, options, correct_answer, topic, difficulty_level FROM questions WHERE course_id = ?
@@ -101,11 +109,17 @@ class StudentQuizAgent:
     # Sort topics by weakness (lower score percentage means weaker)
     sorted_topics = sorted(topic_weakness, key=topic_weakness.get)
 
-    # Prioritize questions based on weaker topics and student's ability level
-    prioritized_questions = sorted(
-      remaining_questions,
-      key=lambda q: (sorted_topics.index(q[4]), abs(q[5] - student_ability_level))  # Sort by topic weakness and closeness to ability level
-    )
+    # Prioritize questions based on weaker topics and student's ability level if available
+    if student_ability_level is not None:
+      prioritized_questions = sorted(
+        remaining_questions,
+        key=lambda q: (sorted_topics.index(q[4]), abs(q[5] - student_ability_level))  # Sort by topic weakness and closeness to ability level
+      )
+    else:
+      prioritized_questions = sorted(
+        remaining_questions,
+        key=lambda q: sorted_topics.index(q[4])  # Sort by topic weakness only
+      )
 
     # Prepare data for AI to determine the next question
     ai_input = {
@@ -127,7 +141,7 @@ class StudentQuizAgent:
       # Use AI to suggest the next question based on predefined rules
       response = openai.Completion.create(
         engine="text-davinci-003",
-        prompt=f"Based on the student's performance and the remaining questions, suggest the most appropriate next question, prioritizing weaker topics and matching the student's ability level: {json.dumps(ai_input)}",
+        prompt=f"Based on the student's performance and the remaining questions, suggest the most appropriate next question, prioritizing weaker topics and matching the student's ability level if available: {json.dumps(ai_input)}",
         max_tokens=150
       )
 
