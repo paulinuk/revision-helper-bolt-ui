@@ -1,0 +1,12 @@
+
+faiss-cpu>=1.7.4
+openai>=1.0.0
+requests>=2.31.0
+Flask==2.0.3
+ruamel.yaml==0.17.21
+openai
+crewAI>=0.95.0
+crewAI-tools==0.17.0
+PyYAML==6.0
+Werkzeug==2.0.3
+Flask-Swagger-UI==3.36.0
