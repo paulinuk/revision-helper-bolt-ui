@@ -1,14 +1,17 @@
 import yaml
-from crewai.agents import ResearchAgent, QuestionAgent, DatabaseAgent
+import os
+from crewai.agents.research_agent import ResearchAgent
+from crewai.agents.question_agent import QuestionAgent
+from crewai.agents.database_agent import DatabaseAgent
 
 def load_config(file_path):
     with open(file_path, "r") as file:
         return yaml.safe_load(file)
 
 def main():
-    research_config = load_config("yaml/research_agent.yaml")
-    question_config = load_config("yaml/question_agent.yaml")
-    database_config = load_config("yaml/database_agent.yaml")
+    research_config = load_config("crewai/agents/yaml/research_agent.yaml")
+    question_config = load_config("crewai/agents/yaml/question_agent.yaml")
+    database_config = load_config("crewai/agents/yaml/database_agent.yaml")
 
     research_agent = ResearchAgent(subject="Quantum Physics", config=research_config)
     question_agent = QuestionAgent(subject="Quantum Physics", config=question_config)

@@ -1,14 +1,18 @@
 import json
 import logging
-from crewai.agents.models.openai_model import OpenAIModelAgent
-from crewai.agents.models.deepseek_model import DeepSeekModelAgent
+from .models.openai_model import OpenAIModelAgent
+from .models.deepseek_model import DeepSeekModelAgent
 
 logging.basicConfig(filename="logs/model_agent.log", level=logging.INFO, 
                     format="%(asctime)s - %(levelname)s - %(message)s")
 
 class ModelAgent:
     def __init__(self, config_path="config.json"):
-        with open(config_path, "r") as file:
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Get the root directory
+        config_path = os.path.join(BASE_DIR, "..", "..", "config", "config.json")
+
+with open(config_path, "r") as file:
+    config = json.load(file)
             self.config = json.load(file)
 
         self.default_model = self.config["default_model"]
@@ -29,4 +33,4 @@ class ModelAgent:
             return response
         except Exception as e:
             logging.error(f"Error in {self.default_model}: {str(e)}")
-            return "Error generating response." 
+            return "Error generating response."
